@@ -18,7 +18,11 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(
-          items: Array<{ name: string; value: string; options?: Parameters<typeof response.cookies.set>[2] }>,
+          items: Array<{
+            name: string;
+            value: string;
+            options?: Parameters<typeof response.cookies.set>[2];
+          }>,
         ) {
           for (const { name, value } of items) {
             request.cookies.set(name, value);

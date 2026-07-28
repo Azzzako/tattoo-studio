@@ -11,18 +11,21 @@ interface ArtistPageProps {
   params: { slug: string };
 }
 
-const ARTISTS: Record<string, {
-  name: string;
-  headline: string;
-  bio: string;
-  longBio: string;
-  styles: string[];
-  location: string;
-  experience: number;
-  socials: Array<{ network: 'instagram' | 'twitter' | 'youtube' | 'website'; url: string }>;
-  services: Array<{ name: string; duration: string; price: string }>;
-  portfolio: string[];
-}> = {
+const ARTISTS: Record<
+  string,
+  {
+    name: string;
+    headline: string;
+    bio: string;
+    longBio: string;
+    styles: string[];
+    location: string;
+    experience: number;
+    socials: Array<{ network: 'instagram' | 'twitter' | 'youtube' | 'website'; url: string }>;
+    services: Array<{ name: string; duration: string; price: string }>;
+    portfolio: string[];
+  }
+> = {
   inka: {
     name: 'Inka',
     headline: 'Geometría con intención.',
@@ -99,35 +102,42 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
 
   return (
     <article>
-      <header className="relative overflow-hidden border-b border-border">
+      <header className="border-border relative overflow-hidden border-b">
         <div className="container grid gap-12 py-16 md:grid-cols-[1.1fr_1fr] md:py-24">
           <div className="flex flex-col gap-6">
-            <Button asChild variant="ghost" size="sm" className="w-fit gap-2 px-0 text-ink-400 hover:text-gold">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="text-ink-400 hover:text-gold w-fit gap-2 px-0"
+            >
               <Link href="/tatuadores">
                 <ArrowLeft className="h-3.5 w-3.5" />
                 Todos los tatuadores
               </Link>
             </Button>
-            <p className="text-xs uppercase tracking-[0.2em] text-gold">{artist.styles.join(' · ')}</p>
+            <p className="text-gold text-xs uppercase tracking-[0.2em]">
+              {artist.styles.join(' · ')}
+            </p>
             <h1 className="font-display text-6xl leading-[0.95] md:text-8xl">{artist.name}</h1>
-            <p className="font-display text-3xl text-ink-200">{artist.headline}</p>
-            <p className="max-w-xl text-base leading-relaxed text-ink-300">{artist.bio}</p>
-            <dl className="mt-4 flex flex-wrap gap-6 border-t border-border pt-6 text-sm">
+            <p className="font-display text-ink-200 text-3xl">{artist.headline}</p>
+            <p className="text-ink-300 max-w-xl text-base leading-relaxed">{artist.bio}</p>
+            <dl className="border-border mt-4 flex flex-wrap gap-6 border-t pt-6 text-sm">
               <div>
-                <dt className="text-xs uppercase tracking-[0.18em] text-ink-400">Ciudad</dt>
-                <dd className="mt-1 flex items-center gap-2 text-ink-100">
-                  <MapPin className="h-3.5 w-3.5 text-gold" />
+                <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Ciudad</dt>
+                <dd className="text-ink-100 mt-1 flex items-center gap-2">
+                  <MapPin className="text-gold h-3.5 w-3.5" />
                   {artist.location}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-[0.18em] text-ink-400">Años tatuando</dt>
-                <dd className="mt-1 text-ink-100">{artist.experience}</dd>
+                <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Años tatuando</dt>
+                <dd className="text-ink-100 mt-1">{artist.experience}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-[0.18em] text-ink-400">Agenda</dt>
-                <dd className="mt-1 flex items-center gap-2 text-ink-100">
-                  <Calendar className="h-3.5 w-3.5 text-gold" />
+                <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Agenda</dt>
+                <dd className="text-ink-100 mt-1 flex items-center gap-2">
+                  <Calendar className="text-gold h-3.5 w-3.5" />
                   Cierra en ~3 semanas
                 </dd>
               </div>
@@ -156,7 +166,7 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
             </div>
           </div>
           <div className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden border border-border">
+            <div className="border-border relative aspect-[4/5] overflow-hidden border">
               <ImagePlaceholder
                 seed={`artist-hero-${params.slug}`}
                 ratio="4/5"
@@ -167,24 +177,24 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
         </div>
       </header>
 
-      <section aria-labelledby="bio" className="border-b border-border py-20">
+      <section aria-labelledby="bio" className="border-border border-b py-20">
         <div className="container grid gap-12 md:grid-cols-[1fr_2fr]">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-gold">Bio</p>
-            <h2 id="bio" className="mt-3 font-display text-4xl">
+            <p className="text-gold text-xs uppercase tracking-[0.2em]">Bio</p>
+            <h2 id="bio" className="font-display mt-3 text-4xl">
               Una conversación larga.
             </h2>
           </div>
-          <p className="font-display text-2xl leading-relaxed text-ink-100">{artist.longBio}</p>
+          <p className="font-display text-ink-100 text-2xl leading-relaxed">{artist.longBio}</p>
         </div>
       </section>
 
-      <section aria-labelledby="portafolio" className="border-b border-border py-20">
+      <section aria-labelledby="portafolio" className="border-border border-b py-20">
         <div className="container">
           <div className="mb-10 flex items-end justify-between gap-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-gold">Portafolio</p>
-              <h2 id="portafolio" className="mt-3 font-display text-4xl">
+              <p className="text-gold text-xs uppercase tracking-[0.2em]">Portafolio</p>
+              <h2 id="portafolio" className="font-display mt-3 text-4xl">
                 Trabajos recientes.
               </h2>
             </div>
@@ -207,11 +217,11 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
         </div>
       </section>
 
-      <section aria-labelledby="servicios" className="border-b border-border py-20">
+      <section aria-labelledby="servicios" className="border-border border-b py-20">
         <div className="container">
           <div className="mb-10">
-            <p className="text-xs uppercase tracking-[0.2em] text-gold">Servicios</p>
-            <h2 id="servicios" className="mt-3 font-display text-4xl">
+            <p className="text-gold text-xs uppercase tracking-[0.2em]">Servicios</p>
+            <h2 id="servicios" className="font-display mt-3 text-4xl">
               Cómo se trabaja con {artist.name}.
             </h2>
           </div>
@@ -219,17 +229,19 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
             {artist.services.map((service) => (
               <div
                 key={service.name}
-                className="flex flex-col gap-4 border border-border bg-ink-900 p-6 transition-colors hover:border-gold/50"
+                className="border-border bg-ink-900 hover:border-gold/50 flex flex-col gap-4 border p-6 transition-colors"
               >
                 <h3 className="font-display text-2xl">{service.name}</h3>
-                <p className="text-sm text-ink-300">{service.duration}</p>
-                <p className="font-display text-3xl text-gold">{service.price}</p>
+                <p className="text-ink-300 text-sm">{service.duration}</p>
+                <p className="font-display text-gold text-3xl">{service.price}</p>
               </div>
             ))}
           </div>
           <div className="mt-10">
             <Button asChild size="lg">
-              <Link href={`/tatuadores/${params.slug}/reservar`}>Iniciar reserva con {artist.name}</Link>
+              <Link href={`/tatuadores/${params.slug}/reservar`}>
+                Iniciar reserva con {artist.name}
+              </Link>
             </Button>
           </div>
         </div>

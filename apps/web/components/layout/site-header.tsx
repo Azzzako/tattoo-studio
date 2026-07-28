@@ -19,7 +19,7 @@ export function SiteHeader({ className }: { className?: string }) {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+        'border-border/60 bg-background/80 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 border-b backdrop-blur',
         className,
       )}
     >
@@ -32,7 +32,7 @@ export function SiteHeader({ className }: { className?: string }) {
             <Link
               key={item.href}
               href={item.href}
-              className="text-xs font-medium uppercase tracking-[0.18em] text-ink-300 transition-colors hover:text-gold"
+              className="text-ink-300 hover:text-gold text-xs font-medium uppercase tracking-[0.18em] transition-colors"
             >
               {item.label}
             </Link>
@@ -62,7 +62,7 @@ export function SiteHeader({ className }: { className?: string }) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="font-display text-3xl text-foreground hover:text-gold"
+                    className="font-display text-foreground hover:text-gold text-3xl"
                   >
                     {item.label}
                   </Link>

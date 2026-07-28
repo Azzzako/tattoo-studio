@@ -13,13 +13,13 @@ export function ErrorState({ title, description, action, className }: ErrorState
     <div
       role="alert"
       className={cn(
-        'flex flex-col items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/5 px-6 py-12 text-center',
+        'border-destructive/40 bg-destructive/5 flex flex-col items-center gap-3 rounded-lg border px-6 py-12 text-center',
         className,
       )}
     >
-      <AlertTriangle className="h-8 w-8 text-destructive" />
+      <AlertTriangle className="text-destructive h-8 w-8" />
       <h3 className="font-display text-2xl">{title}</h3>
-      {description && <p className="max-w-sm text-sm text-muted-foreground">{description}</p>}
+      {description && <p className="text-muted-foreground max-w-sm text-sm">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   );

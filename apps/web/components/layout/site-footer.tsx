@@ -14,24 +14,25 @@ const ESTUDIO = {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className="border-border bg-background border-t">
       <div className="container grid gap-12 py-16 md:grid-cols-4">
         <div className="md:col-span-2">
           <Logo />
-          <p className="mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Estudio de tatuajes en Ciudad de México. Piezas únicas, hechas a mano y contigo en cada decisión.
+          <p className="text-muted-foreground mt-6 max-w-sm text-sm leading-relaxed">
+            Estudio de tatuajes en Ciudad de México. Piezas únicas, hechas a mano y contigo en cada
+            decisión.
           </p>
-          <ul className="mt-8 flex flex-col gap-3 text-sm text-ink-300">
+          <ul className="text-ink-300 mt-8 flex flex-col gap-3 text-sm">
             <li className="flex items-center gap-3">
-              <MapPin className="h-4 w-4 text-gold" />
+              <MapPin className="text-gold h-4 w-4" />
               {ESTUDIO.address}
             </li>
             <li className="flex items-center gap-3">
-              <Phone className="h-4 w-4 text-gold" />
+              <Phone className="text-gold h-4 w-4" />
               {ESTUDIO.phone}
             </li>
             <li className="flex items-center gap-3">
-              <Mail className="h-4 w-4 text-gold" />
+              <Mail className="text-gold h-4 w-4" />
               <a href={`mailto:${ESTUDIO.email}`} className="hover:text-gold">
                 {ESTUDIO.email}
               </a>
@@ -39,8 +40,10 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Estudio</h3>
-          <ul className="space-y-3 text-sm text-ink-300">
+          <h3 className="text-gold mb-4 text-xs font-semibold uppercase tracking-[0.2em]">
+            Estudio
+          </h3>
+          <ul className="text-ink-300 space-y-3 text-sm">
             <li>
               <Link href="/tatuadores" className="hover:text-gold">
                 Tatuadores
@@ -64,8 +67,10 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-gold">Boletín</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="text-gold mb-4 text-xs font-semibold uppercase tracking-[0.2em]">
+            Boletín
+          </h3>
+          <p className="text-muted-foreground text-sm">
             Avísame cuando abras agenda y nuevos diseños de cada tatuador.
           </p>
           <form className="mt-4 flex gap-2" action="/api/newsletter/subscribe" method="post">
@@ -81,7 +86,12 @@ export function SiteFooter() {
               Unirme
             </Button>
           </form>
-          <Button asChild variant="ghost" size="sm" className="mt-8 gap-2 px-0 text-gold hover:text-gold">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-gold hover:text-gold mt-8 gap-2 px-0"
+          >
             <a href={ESTUDIO.instagram} rel="noreferrer" target="_blank">
               <Instagram className="h-4 w-4" />
               @insigne.tattoo
@@ -89,8 +99,8 @@ export function SiteFooter() {
           </Button>
         </div>
       </div>
-      <div className="border-t border-border">
-        <div className="container flex flex-col items-start justify-between gap-2 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
+      <div className="border-border border-t">
+        <div className="text-muted-foreground container flex flex-col items-start justify-between gap-2 py-6 text-xs sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} Insigne Tattoo. Todos los derechos reservados.</p>
           <p>{ESTUDIO.schedule}</p>
           <div className="flex gap-4">

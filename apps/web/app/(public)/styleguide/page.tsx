@@ -13,9 +13,9 @@ export default function StyleguidePage() {
   return (
     <div className="container max-w-5xl py-20">
       <header className="mb-12">
-        <p className="text-xs uppercase tracking-[0.2em] text-gold">Sistema de diseño</p>
-        <h1 className="mt-3 font-display text-6xl">Styleguide</h1>
-        <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
+        <p className="text-gold text-xs uppercase tracking-[0.2em]">Sistema de diseño</p>
+        <h1 className="font-display mt-3 text-6xl">Styleguide</h1>
+        <p className="text-muted-foreground mt-4 max-w-2xl text-sm">
           Vista de componentes y tokens visuales de Insigne Tattoo. Solo desarrollo.
         </p>
       </header>
@@ -40,8 +40,8 @@ export default function StyleguidePage() {
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="font-display text-5xl">Reservar con Insigne.</p>
-            <p className="font-display text-3xl text-gold">Geometría con intención.</p>
-            <p className="font-display text-xl text-ink-300">Una conversación larga.</p>
+            <p className="font-display text-gold text-3xl">Geometría con intención.</p>
+            <p className="font-display text-ink-300 text-xl">Una conversación larga.</p>
           </CardContent>
         </Card>
         <Card>
@@ -49,9 +49,9 @@ export default function StyleguidePage() {
             <CardTitle>Sans (Gotham)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
-            <p className="text-sm uppercase tracking-[0.2em] text-gold">Mayúsculas espaciadas</p>
+            <p className="text-gold text-sm uppercase tracking-[0.2em]">Mayúsculas espaciadas</p>
             <p className="text-base">Cuerpo base 16px / Gotham Book</p>
-            <p className="text-sm text-muted-foreground">Texto secundario 14px / Gotham Light</p>
+            <p className="text-muted-foreground text-sm">Texto secundario 14px / Gotham Light</p>
           </CardContent>
         </Card>
       </Section>
@@ -65,15 +65,15 @@ export default function StyleguidePage() {
             {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((step) => (
               <div key={step} className="space-y-1">
                 <div
-                  className="aspect-square border border-border"
+                  className="border-border aspect-square border"
                   style={{ backgroundColor: `hsl(0 0% ${100 - step * 0.7}%)` }}
                 />
-                <p className="font-mono text-[0.65rem] text-ink-400">ink-{step}</p>
+                <p className="text-ink-400 font-mono text-[0.65rem]">ink-{step}</p>
               </div>
             ))}
             <div className="space-y-1">
-              <div className="aspect-square bg-gold" />
-              <p className="font-mono text-[0.65rem] text-gold">gold</p>
+              <div className="bg-gold aspect-square" />
+              <p className="text-gold font-mono text-[0.65rem]">gold</p>
             </div>
           </CardContent>
         </Card>
@@ -160,7 +160,7 @@ export default function StyleguidePage() {
       <Section title="Calendar">
         <Card>
           <CardContent>
-            <CalendarPicker mode="single" className="rounded-md border border-border" />
+            <CalendarPicker mode="single" className="border-border rounded-md border" />
           </CardContent>
         </Card>
       </Section>

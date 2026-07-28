@@ -20,7 +20,9 @@ async function main() {
     const dir = path.resolve(new URL('.', import.meta.url).pathname, 'migrations');
     const files = (await readdir(dir)).filter((f) => f.endsWith('.sql')).sort();
     for (const file of files) {
-      const already = await client.query('select 1 from schema_migrations where filename = $1', [file]);
+      const already = await client.query('select 1 from schema_migrations where filename = $1', [
+        file,
+      ]);
       if (already.rowCount) continue;
       const sql = await readFile(path.join(dir, file), 'utf8');
       console.log(`→ ${file}`);

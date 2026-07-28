@@ -19,7 +19,7 @@ export default function LoginPage() {
   return (
     <div className="container flex max-w-sm flex-col gap-4 py-16">
       <h1 className="font-display text-3xl font-semibold">Acceder</h1>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Te enviaremos un enlace seguro por correo para iniciar sesión.
       </p>
       <form className="grid gap-3" onSubmit={onSubmit}>
@@ -37,7 +37,7 @@ export default function LoginPage() {
           {status === 'sent' ? 'Enlace enviado' : 'Enviar enlace'}
         </Button>
       </form>
-      <Link href="/tatuadores" className="text-xs text-muted-foreground">
+      <Link href="/tatuadores" className="text-muted-foreground text-xs">
         Volver al sitio
       </Link>
     </div>

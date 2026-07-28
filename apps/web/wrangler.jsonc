@@ -5,15 +5,15 @@
   "compatibility_date": "2025-07-18",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
   "assets": {
     "directory": ".open-next/assets",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
   },
   "vars": {
     "APP_NAME": "Tattoo Studio",
     "DEFAULT_TZ": "America/Mexico_City",
-    "DEFAULT_LOCALE": "es-MX"
-  }
+    "DEFAULT_LOCALE": "es-MX",
+  },
 }

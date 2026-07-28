@@ -16,11 +16,11 @@ interface PortfolioItemProps {
  */
 export function PortfolioItem({ seed, title, styles, alt, ratio = '3/4' }: PortfolioItemProps) {
   return (
-    <figure className="group relative overflow-hidden border border-border bg-ink-900">
+    <figure className="border-border bg-ink-900 group relative overflow-hidden border">
       <ImagePlaceholder seed={seed} ratio={ratio} alt={alt ?? title} overlay="fade" />
       <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
         <div>
-          <p className="font-display text-xl leading-tight text-foreground">{title}</p>
+          <p className="font-display text-foreground text-xl leading-tight">{title}</p>
           {styles && styles.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {styles.map((style) => (

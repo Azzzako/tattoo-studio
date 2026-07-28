@@ -7,14 +7,20 @@ import { cn } from '@/lib/cn';
  * El subtítulo usa la tipografía sans en versalitas espaciadas para dar
  * presencia editorial.
  */
-export function Logo({ className, subtitle = 'ESTUDIO · CDMX' }: { className?: string; subtitle?: string }) {
+export function Logo({
+  className,
+  subtitle = 'ESTUDIO · CDMX',
+}: {
+  className?: string;
+  subtitle?: string;
+}) {
   return (
     <div className={cn('flex flex-col items-start gap-0.5', className)}>
-      <span className="font-display text-3xl leading-none tracking-tight text-foreground">
+      <span className="font-display text-foreground text-3xl leading-none tracking-tight">
         Insigne
         <span className="text-gold"> Tattoo</span>
       </span>
-      <span className="text-[0.6rem] font-medium uppercase tracking-[0.35em] text-ink-400">
+      <span className="text-ink-400 text-[0.6rem] font-medium uppercase tracking-[0.35em]">
         {subtitle}
       </span>
     </div>

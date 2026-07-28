@@ -54,7 +54,7 @@ export function ImagePlaceholder({
       role={alt ? 'img' : 'presentation'}
       aria-label={alt || undefined}
       className={cn(
-        'relative overflow-hidden bg-ink-900 after:absolute after:inset-0 after:content-[""]',
+        'bg-ink-900 relative overflow-hidden after:absolute after:inset-0 after:content-[""]',
         sizes[ratio],
         overlayClass,
         className,
@@ -67,7 +67,7 @@ export function ImagePlaceholder({
         alt=""
         aria-hidden="true"
         loading="lazy"
-        className="h-full w-full object-cover grayscale contrast-110"
+        className="contrast-110 h-full w-full object-cover grayscale"
       />
     </div>
   );

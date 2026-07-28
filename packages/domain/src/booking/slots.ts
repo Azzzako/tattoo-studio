@@ -48,10 +48,7 @@ function dayWeekday(date: Date, tz: string): WeekdayKey {
   return mapped;
 }
 
-function exceptionCovers(
-  ex: AvailabilityException,
-  range: TimeRange,
-): boolean {
+function exceptionCovers(ex: AvailabilityException, range: TimeRange): boolean {
   if (!ex.startsAt || !ex.endsAt) {
     const start = new Date(ex.date + 'T00:00:00Z').getTime();
     const end = start + MS_DAY;
@@ -85,17 +82,29 @@ export function generateSlots(input: SlotGenerationInput): Slot[] {
     const weekday = dayWeekday(day, input.timezone);
     const todaysRules = input.rules.filter((r) => r.weekday === weekday && isRuleEffective(r, day));
     for (const rule of todaysRules) {
-      const window = rangeFromLocal(day, input.timezone, rule.startsAt, diff(rule.startsAt, rule.endsAt));
+      const window = rangeFromLocal(
+        day,
+        input.timezone,
+        rule.startsAt,
+        diff(rule.startsAt, rule.endsAt),
+      );
       let t = new Date(window.start);
       while (new Date(t.getTime() + totalMinutes * 60_000) <= new Date(window.end)) {
         const start = toIso(t);
         const end = addMinutes(start, input.service.durationMinutes);
         const candidate: Slot = { range: { start, end }, serviceId: input.service.id };
         if (
-          !input.exceptions.some((ex) => ex.kind === 'block' && exceptionCovers(ex, candidate.range))
+          !input.exceptions.some(
+            (ex) => ex.kind === 'block' && exceptionCovers(ex, candidate.range),
+          )
         ) {
           const conflict = input.busy.some((busy) =>
-            rangesOverlap(busy.range.start, busy.range.end, candidate.range.start, candidate.range.end),
+            rangesOverlap(
+              busy.range.start,
+              busy.range.end,
+              candidate.range.start,
+              candidate.range.end,
+            ),
           );
           if (!conflict) slots.push(candidate);
         }

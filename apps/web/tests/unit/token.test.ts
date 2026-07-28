@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { constantTimeEquals, hashToken, issueClientToken, tokenIsFresh } from '@tattoo/domain/booking/token';
+import {
+  constantTimeEquals,
+  hashToken,
+  issueClientToken,
+  tokenIsFresh,
+} from '@tattoo/domain/booking/token';
 
 describe('client token', () => {
   it('produces a hash that matches its token', () => {

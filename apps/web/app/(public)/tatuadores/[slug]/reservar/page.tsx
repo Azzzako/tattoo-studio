@@ -2,7 +2,16 @@
 
 import { useReducer, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Calendar, CheckCircle2, Mail, MapPin, Phone, User } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar,
+  CheckCircle2,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+} from 'lucide-react';
 import { notFound, useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -81,7 +90,11 @@ export default function BookingWizardPage() {
   const canAdvance =
     (state.step === 1 && state.serviceId !== null) ||
     (state.step === 2 && state.date !== null && state.slot !== null) ||
-    (state.step === 3 && state.contact.name && state.contact.email && state.contact.phone && state.contact.idea);
+    (state.step === 3 &&
+      state.contact.name &&
+      state.contact.email &&
+      state.contact.phone &&
+      state.contact.idea);
 
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -102,17 +115,17 @@ export default function BookingWizardPage() {
           }
           className="mb-8"
         />
-        <div className="grid gap-6 border border-border bg-ink-900 p-8 md:grid-cols-2">
+        <div className="border-border bg-ink-900 grid gap-6 border p-8 md:grid-cols-2">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-gold">Resumen</p>
+            <p className="text-gold text-xs uppercase tracking-[0.2em]">Resumen</p>
             <dl className="mt-4 space-y-3 text-sm">
               <div className="flex justify-between gap-4">
                 <dt className="text-ink-400">Servicio</dt>
-                <dd className="text-right text-foreground">{service?.name}</dd>
+                <dd className="text-foreground text-right">{service?.name}</dd>
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-ink-400">Fecha</dt>
-                <dd className="text-right text-foreground">
+                <dd className="text-foreground text-right">
                   {state.date?.toLocaleDateString('es-MX', {
                     weekday: 'long',
                     day: 'numeric',
@@ -122,14 +135,14 @@ export default function BookingWizardPage() {
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-ink-400">Hora</dt>
-                <dd className="text-right text-foreground">{state.slot}</dd>
+                <dd className="text-foreground text-right">{state.slot}</dd>
               </div>
             </dl>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-gold">Tatuador</p>
-            <h2 className="mt-4 font-display text-3xl capitalize">{slug}</h2>
-            <p className="mt-2 text-sm text-ink-300">
+            <p className="text-gold text-xs uppercase tracking-[0.2em]">Tatuador</p>
+            <h2 className="font-display mt-4 text-3xl capitalize">{slug}</h2>
+            <p className="text-ink-300 mt-2 text-sm">
               Recibirás un enlace seguro por WhatsApp para revisar y confirmar.
             </p>
           </div>
@@ -140,9 +153,9 @@ export default function BookingWizardPage() {
 
   return (
     <div className="container py-12 md:py-20">
-      <header className="mb-10 grid gap-4 border-b border-border pb-8 md:grid-cols-[1fr_auto] md:items-end">
+      <header className="border-border mb-10 grid gap-4 border-b pb-8 md:grid-cols-[1fr_auto] md:items-end">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-gold">Reservar</p>
+          <p className="text-gold text-xs uppercase tracking-[0.2em]">Reservar</p>
           <h1 className="font-display text-5xl capitalize md:text-6xl">Con {slug}</h1>
         </div>
         <ImagePlaceholder
@@ -162,7 +175,11 @@ export default function BookingWizardPage() {
           const active = state.step === id;
           const done = state.step > id;
           return (
-            <li key={id} className="flex items-center gap-2" aria-current={active ? 'step' : undefined}>
+            <li
+              key={id}
+              className="flex items-center gap-2"
+              aria-current={active ? 'step' : undefined}
+            >
               <span
                 className={`flex h-7 w-7 items-center justify-center rounded-full border ${
                   done
@@ -174,8 +191,10 @@ export default function BookingWizardPage() {
               >
                 {done ? <CheckCircle2 className="h-4 w-4" /> : id}
               </span>
-              <span className={active ? 'text-gold' : done ? 'text-foreground' : 'text-ink-400'}>{label}</span>
-              {id < 3 && <span className="mx-2 h-px w-8 bg-border" aria-hidden="true" />}
+              <span className={active ? 'text-gold' : done ? 'text-foreground' : 'text-ink-400'}>
+                {label}
+              </span>
+              {id < 3 && <span className="bg-border mx-2 h-px w-8" aria-hidden="true" />}
             </li>
           );
         })}
@@ -195,7 +214,7 @@ export default function BookingWizardPage() {
         <div className="min-h-[28rem]">
           {state.step === 1 && (
             <fieldset className="space-y-4">
-              <legend className="mb-2 font-display text-2xl">Elige el servicio</legend>
+              <legend className="font-display mb-2 text-2xl">Elige el servicio</legend>
               {SERVICES.map((service) => (
                 <label
                   key={service.id}
@@ -207,10 +226,10 @@ export default function BookingWizardPage() {
                 >
                   <div>
                     <p className="font-display text-2xl">{service.name}</p>
-                    <p className="mt-1 text-sm text-ink-300">{service.duration}</p>
+                    <p className="text-ink-300 mt-1 text-sm">{service.duration}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-display text-2xl text-gold">{service.price}</p>
+                    <p className="font-display text-gold text-2xl">{service.price}</p>
                   </div>
                   <input
                     type="radio"
@@ -228,19 +247,21 @@ export default function BookingWizardPage() {
           {state.step === 2 && (
             <div className="grid gap-8 md:grid-cols-[1fr_auto]">
               <div>
-                <p className="mb-3 font-display text-2xl">Selecciona el día</p>
-                <div className="border border-border p-2">
+                <p className="font-display mb-3 text-2xl">Selecciona el día</p>
+                <div className="border-border border p-2">
                   <CalendarPicker
                     mode="single"
                     selected={state.date ?? undefined}
-                    onSelect={(d: Date | undefined) => d && dispatch({ type: 'select_date', date: d })}
+                    onSelect={(d: Date | undefined) =>
+                      d && dispatch({ type: 'select_date', date: d })
+                    }
                     disabled={(date: Date) => date < new Date()}
                     className="rdp-dark"
                   />
                 </div>
               </div>
               <div>
-                <p className="mb-3 font-display text-2xl">Elige la hora</p>
+                <p className="font-display mb-3 text-2xl">Elige la hora</p>
                 <div className="grid grid-cols-2 gap-2">
                   {SLOTS.map((slot) => (
                     <Button
@@ -254,7 +275,7 @@ export default function BookingWizardPage() {
                     </Button>
                   ))}
                 </div>
-                <p className="mt-4 text-xs text-ink-400">
+                <p className="text-ink-400 mt-4 text-xs">
                   <MapPin className="mr-1 inline h-3 w-3" />
                   Av. Insurgentes Sur 1234, Del Valle, CDMX
                 </p>
@@ -268,7 +289,7 @@ export default function BookingWizardPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
                   <Label htmlFor="name" className="flex items-center gap-2">
-                    <User className="h-3.5 w-3.5 text-gold" />
+                    <User className="text-gold h-3.5 w-3.5" />
                     Nombre completo
                   </Label>
                   <Input
@@ -276,12 +297,14 @@ export default function BookingWizardPage() {
                     required
                     autoComplete="name"
                     value={state.contact.name}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch({ type: 'update_contact', field: 'name', value: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      dispatch({ type: 'update_contact', field: 'name', value: e.target.value })
+                    }
                   />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email" className="flex items-center gap-2">
-                    <Mail className="h-3.5 w-3.5 text-gold" />
+                    <Mail className="text-gold h-3.5 w-3.5" />
                     Correo
                   </Label>
                   <Input
@@ -290,12 +313,14 @@ export default function BookingWizardPage() {
                     required
                     autoComplete="email"
                     value={state.contact.email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch({ type: 'update_contact', field: 'email', value: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      dispatch({ type: 'update_contact', field: 'email', value: e.target.value })
+                    }
                   />
                 </div>
                 <div className="grid gap-2 md:col-span-2">
                   <Label htmlFor="phone" className="flex items-center gap-2">
-                    <Phone className="h-3.5 w-3.5 text-gold" />
+                    <Phone className="text-gold h-3.5 w-3.5" />
                     WhatsApp
                   </Label>
                   <Input
@@ -304,12 +329,14 @@ export default function BookingWizardPage() {
                     required
                     autoComplete="tel"
                     value={state.contact.phone}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch({ type: 'update_contact', field: 'phone', value: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      dispatch({ type: 'update_contact', field: 'phone', value: e.target.value })
+                    }
                   />
                 </div>
                 <div className="grid gap-2 md:col-span-2">
                   <Label htmlFor="idea" className="flex items-center gap-2">
-                    <Calendar className="h-3.5 w-3.5 text-gold" />
+                    <Calendar className="text-gold h-3.5 w-3.5" />
                     Describe tu tatuaje
                   </Label>
                   <Textarea
@@ -317,7 +344,9 @@ export default function BookingWizardPage() {
                     required
                     minLength={20}
                     value={state.contact.idea}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => dispatch({ type: 'update_contact', field: 'idea', value: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      dispatch({ type: 'update_contact', field: 'idea', value: e.target.value })
+                    }
                     placeholder="Estilo, tamaño, zona del cuerpo, referencias..."
                     rows={4}
                   />
@@ -328,41 +357,44 @@ export default function BookingWizardPage() {
                     id="references"
                     placeholder="Pega enlaces separados por comas"
                     value={state.references}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => dispatch({ type: 'update_references', value: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      dispatch({ type: 'update_references', value: e.target.value })
+                    }
                   />
                 </div>
               </div>
-              <div className="flex items-start gap-2 text-xs text-ink-400">
+              <div className="text-ink-400 flex items-start gap-2 text-xs">
                 <Badge variant="muted">Importante</Badge>
                 <p>
-                  Esta es una solicitud. {slug} confirmará la fecha en menos de 24 horas. No se realiza ningún cargo.
+                  Esta es una solicitud. {slug} confirmará la fecha en menos de 24 horas. No se
+                  realiza ningún cargo.
                 </p>
               </div>
             </div>
           )}
         </div>
 
-        <aside className="border border-border bg-ink-900 p-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-gold">Resumen</p>
-          <h2 className="mt-3 font-display text-2xl">{slug}</h2>
+        <aside className="border-border bg-ink-900 border p-6">
+          <p className="text-gold text-xs uppercase tracking-[0.2em]">Resumen</p>
+          <h2 className="font-display mt-3 text-2xl">{slug}</h2>
           <dl className="mt-6 space-y-3 text-sm">
-            <div className="flex justify-between gap-4 border-b border-border pb-3">
+            <div className="border-border flex justify-between gap-4 border-b pb-3">
               <dt className="text-ink-400">Servicio</dt>
-              <dd className="text-right text-foreground">{service?.name ?? '—'}</dd>
+              <dd className="text-foreground text-right">{service?.name ?? '—'}</dd>
             </div>
-            <div className="flex justify-between gap-4 border-b border-border pb-3">
+            <div className="border-border flex justify-between gap-4 border-b pb-3">
               <dt className="text-ink-400">Duración</dt>
-              <dd className="text-right text-foreground">{service?.duration ?? '—'}</dd>
+              <dd className="text-foreground text-right">{service?.duration ?? '—'}</dd>
             </div>
-            <div className="flex justify-between gap-4 border-b border-border pb-3">
+            <div className="border-border flex justify-between gap-4 border-b pb-3">
               <dt className="text-ink-400">Fecha</dt>
-              <dd className="text-right text-foreground">
+              <dd className="text-foreground text-right">
                 {state.date?.toLocaleDateString('es-MX', { day: 'numeric', month: 'long' }) ?? '—'}
               </dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-ink-400">Hora</dt>
-              <dd className="text-right text-foreground">{state.slot ?? '—'}</dd>
+              <dd className="text-foreground text-right">{state.slot ?? '—'}</dd>
             </div>
           </dl>
           <div className="mt-8 flex justify-between gap-2">

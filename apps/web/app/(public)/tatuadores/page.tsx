@@ -51,7 +51,7 @@ export default function ArtistsPage() {
   return (
     <div className="container py-20 md:py-28">
       <header className="mx-auto mb-16 max-w-3xl text-center">
-        <p className="mb-3 text-xs uppercase tracking-[0.2em] text-gold">Tatuadores</p>
+        <p className="text-gold mb-3 text-xs uppercase tracking-[0.2em]">Tatuadores</p>
         <h1 className="font-display text-6xl leading-[1] md:text-7xl">
           Conoce a quien llevará tu historia a la piel.
         </h1>
@@ -59,8 +59,12 @@ export default function ArtistsPage() {
 
       <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
         {ARTISTS.map((artist) => (
-          <Link key={artist.slug} href={`/tatuadores/${artist.slug}`} className="group flex flex-col">
-            <div className="relative aspect-[3/4] overflow-hidden border border-border">
+          <Link
+            key={artist.slug}
+            href={`/tatuadores/${artist.slug}`}
+            className="group flex flex-col"
+          >
+            <div className="border-border relative aspect-[3/4] overflow-hidden border">
               <ImagePlaceholder
                 seed={`artist-portrait-${artist.slug}`}
                 ratio="3/4"
@@ -73,28 +77,30 @@ export default function ArtistsPage() {
               )}
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/40 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-6">
-                <p className="text-xs uppercase tracking-[0.2em] text-gold">
+                <p className="text-gold text-xs uppercase tracking-[0.2em]">
                   {artist.styles.join(' · ')}
                 </p>
-                <h2 className="mt-2 font-display text-4xl text-foreground transition-colors group-hover:text-gold">
+                <h2 className="font-display text-foreground group-hover:text-gold mt-2 text-4xl transition-colors">
                   {artist.name}
                 </h2>
               </div>
             </div>
             <div className="mt-5 flex items-center justify-between">
-              <p className="text-sm text-ink-300">{artist.location} · {artist.experience} años</p>
-              <div className="flex gap-2 text-ink-400">
+              <p className="text-ink-300 text-sm">
+                {artist.location} · {artist.experience} años
+              </p>
+              <div className="text-ink-400 flex gap-2">
                 {Object.keys(artist.socials).map((network) => {
                   const Icon = SOCIAL_ICONS[network as keyof typeof SOCIAL_ICONS];
                   return Icon ? (
-                    <span key={network} className="rounded-sm border border-border p-1.5">
+                    <span key={network} className="border-border rounded-sm border p-1.5">
                       <Icon className="h-3.5 w-3.5" />
                     </span>
                   ) : null;
                 })}
               </div>
             </div>
-            <p className="mt-4 font-display text-2xl leading-tight text-foreground">
+            <p className="font-display text-foreground mt-4 text-2xl leading-tight">
               {artist.headline}
             </p>
           </Link>

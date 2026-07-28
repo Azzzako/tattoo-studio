@@ -129,11 +129,15 @@ export class GoogleCalendarClient {
     calendarId: string,
     body: Record<string, unknown>,
   ): Promise<{ id: string; etag?: string }> {
-    const res = await this.authedFetchRaw(tokens, `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    const res = await this.authedFetchRaw(
+      tokens,
+      `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      },
+    );
     if (!res.ok) throw new Error(`google_event_create_failed: ${res.status}`);
     const json = (await res.json()) as { id: string; etag?: string };
     return json;
@@ -158,11 +162,15 @@ export class GoogleCalendarClient {
   }
 
   async stopChannel(tokens: GoogleTokens, channel: { id: string; resourceId: string }) {
-    const res = await this.authedFetchRaw(tokens, 'https://www.googleapis.com/calendar/v3/channels/stop', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(channel),
-    });
+    const res = await this.authedFetchRaw(
+      tokens,
+      'https://www.googleapis.com/calendar/v3/channels/stop',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(channel),
+      },
+    );
     if (!res.ok && res.status !== 404) throw new Error(`google_stop_failed: ${res.status}`);
   }
 

@@ -8,11 +8,5 @@ import { cn } from '@/lib/cn';
 export type CalendarProps = DayPickerProps;
 
 export function Calendar({ className, ...props }: CalendarProps) {
-  return (
-    <DayPicker
-      showOutsideDays
-      className={cn('rdp-custom p-3', className)}
-      {...props}
-    />
-  );
+  return <DayPicker showOutsideDays className={cn('rdp-custom p-3', className)} {...props} />;
 }

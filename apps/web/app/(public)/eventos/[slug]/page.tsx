@@ -9,16 +9,19 @@ interface EventPageProps {
   params: { slug: string };
 }
 
-const EVENTS: Record<string, {
-  title: string;
-  city: string;
-  country: string;
-  venue: string;
-  date: string;
-  description: string;
-  artists: Array<{ slug: string; name: string; styles: string[] }>;
-  address: string;
-}> = {
+const EVENTS: Record<
+  string,
+  {
+    title: string;
+    city: string;
+    country: string;
+    venue: string;
+    date: string;
+    description: string;
+    artists: Array<{ slug: string; name: string; styles: string[] }>;
+    address: string;
+  }
+> = {
   'convencion-tinta-2026': {
     title: 'Convención Tinta 2026',
     city: 'CDMX',
@@ -52,41 +55,46 @@ export default function EventDetailPage({ params }: EventPageProps) {
 
   return (
     <article>
-      <header className="relative overflow-hidden border-b border-border">
+      <header className="border-border relative overflow-hidden border-b">
         <div className="container grid gap-12 py-16 md:grid-cols-[1.2fr_1fr] md:py-24">
           <div className="flex flex-col gap-6">
-            <Button asChild variant="ghost" size="sm" className="w-fit gap-2 px-0 text-ink-400 hover:text-gold">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="text-ink-400 hover:text-gold w-fit gap-2 px-0"
+            >
               <Link href="/eventos">
                 <ArrowLeft className="h-3.5 w-3.5" />
                 Todos los eventos
               </Link>
             </Button>
-            <p className="text-xs uppercase tracking-[0.2em] text-gold">{event.date}</p>
+            <p className="text-gold text-xs uppercase tracking-[0.2em]">{event.date}</p>
             <h1 className="font-display text-6xl leading-[0.95] md:text-7xl">{event.title}</h1>
-            <ul className="space-y-2 text-sm text-ink-300">
+            <ul className="text-ink-300 space-y-2 text-sm">
               <li className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-gold" />
+                <MapPin className="text-gold h-4 w-4" />
                 {event.venue}, {event.city}, {event.country}
               </li>
               <li className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gold" />
+                <Calendar className="text-gold h-4 w-4" />
                 Apertura de puertas 11:00 · cierre 21:00
               </li>
             </ul>
-            <p className="max-w-xl text-base leading-relaxed text-ink-200">{event.description}</p>
+            <p className="text-ink-200 max-w-xl text-base leading-relaxed">{event.description}</p>
           </div>
           <div className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden border border-border">
+            <div className="border-border relative aspect-[4/5] overflow-hidden border">
               <ImagePlaceholder seed={`event-hero-${params.slug}`} ratio="4/5" alt={event.title} />
             </div>
           </div>
         </div>
       </header>
 
-      <section aria-labelledby="artistas" className="border-b border-border py-20">
+      <section aria-labelledby="artistas" className="border-border border-b py-20">
         <div className="container">
-          <p className="text-xs uppercase tracking-[0.2em] text-gold">Tatuadores</p>
-          <h2 id="artistas" className="mt-3 mb-10 font-display text-4xl">
+          <p className="text-gold text-xs uppercase tracking-[0.2em]">Tatuadores</p>
+          <h2 id="artistas" className="font-display mb-10 mt-3 text-4xl">
             Del estudio en {event.title}.
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -94,7 +102,7 @@ export default function EventDetailPage({ params }: EventPageProps) {
               <Link
                 key={artist.slug}
                 href={`/tatuadores/${artist.slug}`}
-                className="group flex flex-col gap-4 border border-border bg-ink-900 p-6 transition-colors hover:border-gold/50"
+                className="border-border bg-ink-900 hover:border-gold/50 group flex flex-col gap-4 border p-6 transition-colors"
               >
                 <div className="flex flex-wrap gap-2">
                   {artist.styles.map((style) => (
@@ -103,10 +111,10 @@ export default function EventDetailPage({ params }: EventPageProps) {
                     </Badge>
                   ))}
                 </div>
-                <h3 className="font-display text-3xl text-foreground transition-colors group-hover:text-gold">
+                <h3 className="font-display text-foreground group-hover:text-gold text-3xl transition-colors">
                   {artist.name}
                 </h3>
-                <p className="text-sm text-ink-300">Reservar guest spot en este evento.</p>
+                <p className="text-ink-300 text-sm">Reservar guest spot en este evento.</p>
               </Link>
             ))}
           </div>
@@ -116,14 +124,19 @@ export default function EventDetailPage({ params }: EventPageProps) {
       <section aria-labelledby="ubicacion" className="py-20">
         <div className="container grid gap-12 md:grid-cols-2">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-gold">Ubicación</p>
-            <h2 id="ubicacion" className="mt-3 font-display text-4xl">
+            <p className="text-gold text-xs uppercase tracking-[0.2em]">Ubicación</p>
+            <h2 id="ubicacion" className="font-display mt-3 text-4xl">
               {event.venue}
             </h2>
-            <p className="mt-4 max-w-md text-sm text-ink-300">{event.address}</p>
+            <p className="text-ink-300 mt-4 max-w-md text-sm">{event.address}</p>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden border border-border bg-ink-900">
-            <ImagePlaceholder seed={`event-map-${params.slug}`} ratio="4/3" alt="Mapa del evento" overlay="none" />
+          <div className="border-border bg-ink-900 relative aspect-[4/3] overflow-hidden border">
+            <ImagePlaceholder
+              seed={`event-map-${params.slug}`}
+              ratio="4/3"
+              alt="Mapa del evento"
+              overlay="none"
+            />
           </div>
         </div>
       </section>

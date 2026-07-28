@@ -39,8 +39,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es-MX" data-theme="dark" className={`${gotham.variable} ${bickham.variable}`} suppressHydrationWarning>
-      <body className="min-h-dvh bg-background font-sans text-foreground antialiased grain">
+    <html
+      lang="es-MX"
+      data-theme="dark"
+      className={`${gotham.variable} ${bickham.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="bg-background text-foreground grain min-h-dvh font-sans antialiased">
         <ThemeProvider>
           <GsapProvider />
           {children}

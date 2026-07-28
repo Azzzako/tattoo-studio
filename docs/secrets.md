@@ -6,60 +6,60 @@ Secrets requeridos para CI y deploy. Configurar vía `gh secret set` o en `Setti
 
 ### Aplicación
 
-| Nombre | Descripción |
-|---|---|
-| `APP_URL` | URL pública (ej. `https://tattoo-studio.example.com`) |
+| Nombre      | Descripción                                                                |
+| ----------- | -------------------------------------------------------------------------- |
+| `APP_URL`   | URL pública (ej. `https://tattoo-studio.example.com`)                      |
 | `STUDIO_ID` | UUID del estudio seed (por defecto `00000000-0000-0000-0000-000000000001`) |
 
 ### Supabase
 
-| Nombre | Descripción |
-|---|---|
-| `SUPABASE_URL` | URL del proyecto Supabase |
-| `SUPABASE_ANON_KEY` | Llave anon pública |
-| `SUPABASE_SERVICE_ROLE_KEY` | Llave service role (solo servidor) |
-| `SUPABASE_DB_URL` | URL Postgres directa para migraciones |
+| Nombre                      | Descripción                           |
+| --------------------------- | ------------------------------------- |
+| `SUPABASE_URL`              | URL del proyecto Supabase             |
+| `SUPABASE_ANON_KEY`         | Llave anon pública                    |
+| `SUPABASE_SERVICE_ROLE_KEY` | Llave service role (solo servidor)    |
+| `SUPABASE_DB_URL`           | URL Postgres directa para migraciones |
 
 ### Cifrado
 
-| Nombre | Descripción |
-|---|---|
+| Nombre                 | Descripción                                         |
+| ---------------------- | --------------------------------------------------- |
 | `TOKEN_ENCRYPTION_KEY` | AES-GCM ≥32 caracteres para cifrar tokens de Google |
 
 ### Email (Resend)
 
-| Nombre | Descripción |
-|---|---|
-| `RESEND_API_KEY` | API key de Resend |
+| Nombre              | Descripción          |
+| ------------------- | -------------------- |
+| `RESEND_API_KEY`    | API key de Resend    |
 | `RESEND_FROM_EMAIL` | Remitente verificado |
 
 ### Google Calendar
 
-| Nombre | Descripción |
-|---|---|
-| `GOOGLE_OAUTH_CLIENT_ID` | OAuth client ID |
-| `GOOGLE_OAUTH_CLIENT_SECRET` | OAuth client secret |
-| `GOOGLE_OAUTH_REDIRECT_URI` | `https://APP_URL/api/google/oauth/callback` |
+| Nombre                       | Descripción                                 |
+| ---------------------------- | ------------------------------------------- |
+| `GOOGLE_OAUTH_CLIENT_ID`     | OAuth client ID                             |
+| `GOOGLE_OAUTH_CLIENT_SECRET` | OAuth client secret                         |
+| `GOOGLE_OAUTH_REDIRECT_URI`  | `https://APP_URL/api/google/oauth/callback` |
 
 ### Meta WhatsApp
 
-| Nombre | Descripción |
-|---|---|
-| `WHATSAPP_PHONE_ID` | Phone number ID |
-| `WHATSAPP_ACCESS_TOKEN` | System user access token |
-| `WHATSAPP_BUSINESS_ACCOUNT_ID` | Business account ID |
+| Nombre                         | Descripción              |
+| ------------------------------ | ------------------------ |
+| `WHATSAPP_PHONE_ID`            | Phone number ID          |
+| `WHATSAPP_ACCESS_TOKEN`        | System user access token |
+| `WHATSAPP_BUSINESS_ACCOUNT_ID` | Business account ID      |
 
 ### Cloudflare (deploy)
 
-| Nombre | Descripción |
-|---|---|
-| `CLOUDFLARE_ACCOUNT_ID` | Account ID |
-| `CLOUDFLARE_API_TOKEN` | Token con scope `Workers Scripts:Edit` |
+| Nombre                  | Descripción                            |
+| ----------------------- | -------------------------------------- |
+| `CLOUDFLARE_ACCOUNT_ID` | Account ID                             |
+| `CLOUDFLARE_API_TOKEN`  | Token con scope `Workers Scripts:Edit` |
 
 ### Cron
 
-| Nombre | Descripción |
-|---|---|
+| Nombre        | Descripción                                     |
+| ------------- | ----------------------------------------------- |
 | `CRON_SECRET` | Secreto compartido para endpoints `/api/cron/*` |
 
 ## Configuración con `gh`
@@ -88,10 +88,10 @@ gh secret set CRON_SECRET --body "$(openssl rand -hex 32)"
 
 Variables públicas también necesarias. Configurar en `Settings → Secrets and variables → Actions → Variables`:
 
-| Nombre | Valor |
-|---|---|
-| `DEFAULT_TZ` | `America/Mexico_City` |
-| `DEFAULT_LOCALE` | `es-MX` |
+| Nombre           | Valor                 |
+| ---------------- | --------------------- |
+| `DEFAULT_TZ`     | `America/Mexico_City` |
+| `DEFAULT_LOCALE` | `es-MX`               |
 
 ```bash
 gh variable set DEFAULT_TZ --body "America/Mexico_City"

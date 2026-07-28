@@ -7,15 +7,46 @@ import { Carousel, CarouselItem } from '@/components/ui/carousel';
 import { Marquee } from '@/components/ui/marquee';
 import { SectionReveal } from '@/components/animations/section-reveal';
 
-const STYLES = ['Blackwork', 'Fine-line', 'Realismo', 'Color', 'Acuarela', 'Tradicional', 'Dotwork', 'Microrealismo', 'Japonés', 'Geométrico'];
+const STYLES = [
+  'Blackwork',
+  'Fine-line',
+  'Realismo',
+  'Color',
+  'Acuarela',
+  'Tradicional',
+  'Dotwork',
+  'Microrealismo',
+  'Japonés',
+  'Geométrico',
+];
 const ARTISTS = [
-  { slug: 'inka', name: 'Inka', styles: 'Blackwork · Dotwork', bio: 'Siete años dibujando geometría sobre piel.' },
-  { slug: 'mara', name: 'Mara', styles: 'Color · Fine-line', bio: 'Especialista en piezas pequeñas con línea fina.' },
-  { slug: 'yael', name: 'Yael', styles: 'Realismo · Microrealismo', bio: 'Retratos que respiran sobre piel.' },
+  {
+    slug: 'inka',
+    name: 'Inka',
+    styles: 'Blackwork · Dotwork',
+    bio: 'Siete años dibujando geometría sobre piel.',
+  },
+  {
+    slug: 'mara',
+    name: 'Mara',
+    styles: 'Color · Fine-line',
+    bio: 'Especialista en piezas pequeñas con línea fina.',
+  },
+  {
+    slug: 'yael',
+    name: 'Yael',
+    styles: 'Realismo · Microrealismo',
+    bio: 'Retratos que respiran sobre piel.',
+  },
 ];
 const PORTFOLIO = ['inka-1', 'inka-2', 'mara-1', 'yael-1', 'inka-3', 'mara-2'];
 const EVENTS = [
-  { slug: 'convencion-tinta-2026', title: 'Convención Tinta 2026', city: 'CDMX', date: '30 de agosto' },
+  {
+    slug: 'convencion-tinta-2026',
+    title: 'Convención Tinta 2026',
+    city: 'CDMX',
+    date: '30 de agosto',
+  },
   { slug: 'ink-fest-paris', title: 'Ink Fest Paris', city: 'París', date: '15 de octubre' },
 ];
 
@@ -23,7 +54,7 @@ export default function HomePage() {
   return (
     <main className="flex flex-col">
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border">
+      <section className="border-border relative overflow-hidden border-b">
         <div className="container grid gap-12 py-20 md:grid-cols-[1.1fr_1fr] md:py-32">
           <div className="flex flex-col gap-8">
             <Badge variant="default" className="w-fit">
@@ -31,12 +62,12 @@ export default function HomePage() {
               Agenda abierta · Semana 5
             </Badge>
             <h1 className="font-display text-6xl leading-[0.95] tracking-tight md:text-[7.5rem]">
-              Tinta, <span className="text-gold">historia</span><br />
-              y oficio.
+              Tinta, <span className="text-gold">historia</span>
+              <br />y oficio.
             </h1>
-            <p className="max-w-lg text-base leading-relaxed text-ink-200 md:text-lg">
-              Insigne Tattoo es un estudio independiente en Ciudad de México. Trabajamos contigo en cada decisión,
-              desde el trazo hasta la cura final.
+            <p className="text-ink-200 max-w-lg text-base leading-relaxed md:text-lg">
+              Insigne Tattoo es un estudio independiente en Ciudad de México. Trabajamos contigo en
+              cada decisión, desde el trazo hasta la cura final.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg">
@@ -49,48 +80,52 @@ export default function HomePage() {
                 <Link href="/tatuadores">Ver tatuadores</Link>
               </Button>
             </div>
-            <dl className="mt-8 grid grid-cols-3 gap-6 border-t border-border pt-8 text-sm">
+            <dl className="border-border mt-8 grid grid-cols-3 gap-6 border-t pt-8 text-sm">
               <div>
-                <dt className="text-xs uppercase tracking-[0.18em] text-ink-400">Tatuadores</dt>
-                <dd className="mt-1 font-display text-3xl text-foreground">8</dd>
+                <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Tatuadores</dt>
+                <dd className="font-display text-foreground mt-1 text-3xl">8</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-[0.18em] text-ink-400">Años</dt>
-                <dd className="mt-1 font-display text-3xl text-foreground">12</dd>
+                <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Años</dt>
+                <dd className="font-display text-foreground mt-1 text-3xl">12</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-[0.18em] text-ink-400">Estilos</dt>
-                <dd className="mt-1 font-display text-3xl text-foreground">10+</dd>
+                <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Estilos</dt>
+                <dd className="font-display text-foreground mt-1 text-3xl">10+</dd>
               </div>
             </dl>
           </div>
           <div className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden border border-border">
-              <ImagePlaceholder seed="insigne-hero" ratio="4/5" alt="Tatuaje blackwork en antebrazo" />
+            <div className="border-border relative aspect-[4/5] overflow-hidden border">
+              <ImagePlaceholder
+                seed="insigne-hero"
+                ratio="4/5"
+                alt="Tatuaje blackwork en antebrazo"
+              />
               <div className="absolute inset-x-0 bottom-0 p-6">
-                <p className="font-display text-2xl leading-tight text-foreground">
+                <p className="font-display text-foreground text-2xl leading-tight">
                   Geometría braquial
                 </p>
-                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-ink-300">Inka · 6h</p>
+                <p className="text-ink-300 mt-1 text-xs uppercase tracking-[0.18em]">Inka · 6h</p>
               </div>
             </div>
-            <div className="absolute -bottom-6 -left-6 hidden border border-gold/40 bg-background p-4 md:block glow-gold">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-gold">
-                <Star className="h-3.5 w-3.5 fill-gold text-gold" />
+            <div className="border-gold/40 bg-background glow-gold absolute -bottom-6 -left-6 hidden border p-4 md:block">
+              <div className="text-gold flex items-center gap-2 text-xs uppercase tracking-[0.18em]">
+                <Star className="fill-gold text-gold h-3.5 w-3.5" />
                 4.9 / 5
               </div>
-              <p className="mt-2 max-w-[14rem] text-sm text-ink-200">
+              <p className="text-ink-200 mt-2 max-w-[14rem] text-sm">
                 «La atención al detalle es de otro nivel. Salí con algo que nunca olvidaré.»
               </p>
             </div>
           </div>
         </div>
-        <div className="border-t border-border bg-ink-950">
+        <div className="border-border bg-ink-950 border-t">
           <Marquee speed={50}>
             {STYLES.map((style) => (
               <span
                 key={style}
-                className="font-display text-3xl uppercase tracking-[0.2em] text-ink-300"
+                className="font-display text-ink-300 text-3xl uppercase tracking-[0.2em]"
               >
                 {style} <span className="text-gold">·</span>
               </span>
@@ -100,16 +135,20 @@ export default function HomePage() {
       </section>
 
       {/* TATUADORES */}
-      <section aria-labelledby="tatuadores" className="border-b border-border py-24">
+      <section aria-labelledby="tatuadores" className="border-border border-b py-24">
         <div className="container">
           <div className="mb-12 flex items-end justify-between gap-6">
             <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gold">Tatuadores</p>
+              <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Tatuadores</p>
               <h2 id="tatuadores" className="font-display text-5xl md:text-6xl">
                 Las manos detrás de la tinta.
               </h2>
             </div>
-            <Button asChild variant="ghost" className="hidden gap-2 text-gold hover:text-gold md:inline-flex">
+            <Button
+              asChild
+              variant="ghost"
+              className="text-gold hover:text-gold hidden gap-2 md:inline-flex"
+            >
               <Link href="/tatuadores">
                 Ver todos
                 <ArrowRight className="h-4 w-4" />
@@ -118,12 +157,8 @@ export default function HomePage() {
           </div>
           <SectionReveal className="grid gap-8 md:grid-cols-3">
             {ARTISTS.map((artist) => (
-              <Link
-                key={artist.slug}
-                href={`/tatuadores/${artist.slug}`}
-                className="group block"
-              >
-                <div className="relative aspect-[3/4] overflow-hidden border border-border">
+              <Link key={artist.slug} href={`/tatuadores/${artist.slug}`} className="group block">
+                <div className="border-border relative aspect-[3/4] overflow-hidden border">
                   <ImagePlaceholder
                     seed={`artist-${artist.slug}`}
                     ratio="3/4"
@@ -132,13 +167,13 @@ export default function HomePage() {
                   />
                   <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-6">
-                    <p className="text-xs uppercase tracking-[0.2em] text-gold">{artist.styles}</p>
-                    <h3 className="mt-2 font-display text-4xl text-foreground transition-colors group-hover:text-gold">
+                    <p className="text-gold text-xs uppercase tracking-[0.2em]">{artist.styles}</p>
+                    <h3 className="font-display text-foreground group-hover:text-gold mt-2 text-4xl transition-colors">
                       {artist.name}
                     </h3>
                   </div>
                 </div>
-                <p className="mt-4 text-sm text-ink-300">{artist.bio}</p>
+                <p className="text-ink-300 mt-4 text-sm">{artist.bio}</p>
               </Link>
             ))}
           </SectionReveal>
@@ -146,10 +181,10 @@ export default function HomePage() {
       </section>
 
       {/* PORTAFOLIO */}
-      <section aria-labelledby="portafolio" className="border-b border-border bg-ink-950 py-24">
+      <section aria-labelledby="portafolio" className="border-border bg-ink-950 border-b py-24">
         <div className="container">
           <div className="mb-12 max-w-2xl">
-            <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gold">Portafolio</p>
+            <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Portafolio</p>
             <h2 id="portafolio" className="font-display text-5xl md:text-6xl">
               Trabajos recientes.
             </h2>
@@ -157,10 +192,15 @@ export default function HomePage() {
           <Carousel className="w-full">
             {PORTFOLIO.map((seed, i) => (
               <CarouselItem key={seed} className="basis-full md:basis-1/2 lg:basis-1/3">
-                <div className="relative aspect-[3/4] overflow-hidden border border-border">
-                  <ImagePlaceholder seed={`portfolio-${seed}`} ratio="3/4" alt={`Trabajo ${i + 1}`} overlay="fade" />
+                <div className="border-border relative aspect-[3/4] overflow-hidden border">
+                  <ImagePlaceholder
+                    seed={`portfolio-${seed}`}
+                    ratio="3/4"
+                    alt={`Trabajo ${i + 1}`}
+                    overlay="fade"
+                  />
                   <div className="absolute inset-x-0 bottom-0 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-gold">
+                    <p className="text-gold text-xs uppercase tracking-[0.2em]">
                       {ARTISTS[i % ARTISTS.length]?.name}
                     </p>
                   </div>
@@ -172,16 +212,20 @@ export default function HomePage() {
       </section>
 
       {/* EVENTOS */}
-      <section aria-labelledby="eventos" className="border-b border-border py-24">
+      <section aria-labelledby="eventos" className="border-border border-b py-24">
         <div className="container">
           <div className="mb-12 flex items-end justify-between gap-6">
             <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gold">Eventos</p>
+              <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Eventos</p>
               <h2 id="eventos" className="font-display text-5xl md:text-6xl">
                 Convenciones y guest spots.
               </h2>
             </div>
-            <Button asChild variant="ghost" className="hidden gap-2 text-gold hover:text-gold md:inline-flex">
+            <Button
+              asChild
+              variant="ghost"
+              className="text-gold hover:text-gold hidden gap-2 md:inline-flex"
+            >
               <Link href="/eventos">
                 Ver agenda
                 <ArrowRight className="h-4 w-4" />
@@ -193,16 +237,16 @@ export default function HomePage() {
               <Link
                 key={event.slug}
                 href={`/eventos/${event.slug}`}
-                className="group relative flex flex-col justify-between gap-8 border border-border bg-ink-900 p-8 transition-colors hover:border-gold/50"
+                className="border-border bg-ink-900 hover:border-gold/50 group relative flex flex-col justify-between gap-8 border p-8 transition-colors"
               >
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-gold">{event.date}</p>
-                  <h3 className="mt-4 font-display text-4xl text-foreground transition-colors group-hover:text-gold">
+                  <p className="text-gold text-xs uppercase tracking-[0.2em]">{event.date}</p>
+                  <h3 className="font-display text-foreground group-hover:text-gold mt-4 text-4xl transition-colors">
                     {event.title}
                   </h3>
-                  <p className="mt-2 text-sm text-ink-300">{event.city}</p>
+                  <p className="text-ink-300 mt-2 text-sm">{event.city}</p>
                 </div>
-                <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-ink-400">
+                <span className="text-ink-400 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em]">
                   Conoce a nuestros tatuadores
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </span>
@@ -215,16 +259,16 @@ export default function HomePage() {
       {/* CTA */}
       <section className="py-24">
         <div className="container">
-          <div className="relative overflow-hidden border border-border bg-ink-950 p-12 md:p-20">
+          <div className="border-border bg-ink-950 relative overflow-hidden border p-12 md:p-20">
             <div className="divider-gold absolute inset-x-0 top-0 h-px" />
             <div className="divider-gold absolute inset-x-0 bottom-0 h-px" />
             <div className="relative grid gap-8 md:grid-cols-[1.5fr_1fr] md:items-end">
               <div>
-                <p className="mb-4 text-xs uppercase tracking-[0.2em] text-gold">¿Listo?</p>
+                <p className="text-gold mb-4 text-xs uppercase tracking-[0.2em]">¿Listo?</p>
                 <h2 className="font-display text-5xl leading-tight md:text-7xl">
                   Reservar con Insigne.
                 </h2>
-                <p className="mt-6 max-w-xl text-base text-ink-200">
+                <p className="text-ink-200 mt-6 max-w-xl text-base">
                   Cuéntanos tu idea. Te responderemos en menos de 24 horas para agendar una consulta
                   con el tatuador ideal para tu pieza.
                 </p>
