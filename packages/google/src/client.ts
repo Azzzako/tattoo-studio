@@ -1,4 +1,4 @@
-import { decryptToken, encryptToken } from '../../domain/src/google/sync.js';
+import { decryptToken, encryptToken } from '../../domain/src/google/sync';
 
 export interface GoogleTokens {
   accessToken: string;

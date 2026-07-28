@@ -1,4 +1,4 @@
-import { addMinutes, rangesOverlap } from './duration.js';
+import { addMinutes, rangesOverlap } from './duration';
 import type {
   AvailabilityException,
   AvailabilityRule,
@@ -6,7 +6,7 @@ import type {
   ServiceDuration,
   Slot,
   TimeRange,
-} from './types.js';
+} from './types';
 
 const WEEKDAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
 type WeekdayKey = (typeof WEEKDAY_KEYS)[number];

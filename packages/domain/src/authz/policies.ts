@@ -1,4 +1,4 @@
-import type { Role } from '../booking/types.js';
+import type { Role } from '../booking/types';
 
 export interface Policy {
   resource: string;
