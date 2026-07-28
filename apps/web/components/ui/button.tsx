@@ -29,8 +29,7 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   shine?: boolean;
 }
@@ -44,7 +43,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <>
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 -inset-x-1 -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition-[transform,opacity] duration-500 group-hover/btn:translate-x-[150%] group-hover/btn:opacity-100"
+              className="pointer-events-none absolute -inset-x-1 inset-y-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition-[transform,opacity] duration-500 group-hover/btn:translate-x-[150%] group-hover/btn:opacity-100"
             />
             {children}
           </>
