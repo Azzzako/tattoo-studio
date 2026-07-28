@@ -1,6 +1,6 @@
 'use client';
 
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -12,7 +12,6 @@ import {
   Phone,
   User,
 } from 'lucide-react';
-import { notFound, useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
@@ -71,10 +70,29 @@ function reducer(state: BookingState, action: Action): BookingState {
   }
 }
 
+const STUDIO_WHATSAPP = '5215512345678';
+
+function buildWhatsAppUrl(slug: string, state: BookingState): string {
+  const service = SERVICES.find((s) => s.id === state.serviceId);
+  const message = [
+    `Hola, soy ${state.contact.name}.`,
+    `Quiero reservar con ${slug}.`,
+    `Servicio: ${service?.name ?? ''}`,
+    `Fecha: ${state.date?.toLocaleDateString('es-MX', { day: 'numeric', month: 'long' }) ?? ''}`,
+    `Hora: ${state.slot ?? ''}`,
+    `Idea: ${state.contact.idea}`,
+  ].join('\n');
+  return `https://wa.me/${STUDIO_WHATSAPP}?text=${encodeURIComponent(message)}`;
+}
+
 export default function BookingWizardPage() {
-  const params = useParams<{ slug: string }>();
-  const slug = params?.slug;
-  if (!slug || !['inka', 'mara', 'yael'].includes(slug)) notFound();
+  const [slug, setSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    const candidate = parts[parts.length - 2] ?? null;
+    setSlug(candidate && ['inka', 'mara', 'yael'].includes(candidate) ? candidate : 'inka');
+  }, []);
 
   const [state, dispatch] = useReducer(reducer, {
     step: 1,
@@ -96,21 +114,23 @@ export default function BookingWizardPage() {
       state.contact.phone &&
       state.contact.idea);
 
-  const onSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!canAdvance) return;
-    setSubmitted(true);
-  };
+  if (!slug) {
+    return null;
+  }
 
-  if (submitted) {
+  if (submitted && slug) {
+    const waUrl = buildWhatsAppUrl(slug, state);
     return (
       <div className="container max-w-3xl py-16 md:py-24">
         <SuccessBanner
-          title="Tu solicitud fue enviada."
-          description={`Te escribiremos a ${state.contact.email} en menos de 24 horas para confirmar con ${slug}.`}
+          title="Tu solicitud está lista."
+          description={`Hemos pre-armado un mensaje en WhatsApp para confirmar con ${slug}.`}
           action={
-            <Button asChild variant="outline">
-              <Link href="/">Volver al inicio</Link>
+            <Button asChild>
+              <a href={waUrl} target="_blank" rel="noreferrer">
+                Abrir WhatsApp
+                <ArrowRight className="h-4 w-4" />
+              </a>
             </Button>
           }
           className="mb-8"
@@ -143,9 +163,17 @@ export default function BookingWizardPage() {
             <p className="text-gold text-xs uppercase tracking-[0.2em]">Tatuador</p>
             <h2 className="font-display mt-4 text-3xl capitalize">{slug}</h2>
             <p className="text-ink-300 mt-2 text-sm">
-              Recibirás un enlace seguro por WhatsApp para revisar y confirmar.
+              Te responderemos a {state.contact.email} en menos de 24 horas.
             </p>
           </div>
+        </div>
+        <div className="mt-8 flex gap-3">
+          <Button asChild variant="outline">
+            <Link href="/">Volver al inicio</Link>
+          </Button>
+          <Button asChild variant="ghost">
+            <Link href="/tatuadores">Ver más tatuadores</Link>
+          </Button>
         </div>
       </div>
     );
@@ -206,7 +234,7 @@ export default function BookingWizardPage() {
           if (state.step < 3) {
             dispatch({ type: 'next' });
           } else {
-            onSubmit(event);
+            setSubmitted(true);
           }
         }}
         className="grid gap-8 md:grid-cols-[1.5fr_1fr]"
@@ -229,7 +257,7 @@ export default function BookingWizardPage() {
                     <p className="text-ink-300 mt-1 text-sm">{service.duration}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-display text-gold text-2xl">{service.price}</p>
+                    <p className="text-gold font-display text-2xl">{service.price}</p>
                   </div>
                   <input
                     type="radio"
@@ -366,8 +394,8 @@ export default function BookingWizardPage() {
               <div className="text-ink-400 flex items-start gap-2 text-xs">
                 <Badge variant="muted">Importante</Badge>
                 <p>
-                  Esta es una solicitud. {slug} confirmará la fecha en menos de 24 horas. No se
-                  realiza ningún cargo.
+                  Esta es una solicitud. {slug} confirmará la fecha en menos de 24 horas. Al enviar
+                  te redirigiremos a WhatsApp con el mensaje pre-armado.
                 </p>
               </div>
             </div>
