@@ -4,11 +4,7 @@ import { cn } from '@/lib/cn';
 export const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
     <div className="relative w-full overflow-auto">
-      <table
-        ref={ref}
-        className={cn('w-full caption-bottom text-sm', className)}
-        {...props}
-      />
+      <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
     </div>
   ),
 );
@@ -33,7 +29,7 @@ export const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttribut
 );
 TableRow.displayName = 'TableRow';
 
-export const TableHead = ({ className, ...props }: React.Th HTMLAttributes<HTMLTableCellElement>) => (
+export const TableHead = ({ className, ...props }: React.HTMLAttributes<HTMLTableCellElement>) => (
   <th
     className={cn(
       'h-10 px-3 text-left align-middle text-xs font-medium uppercase tracking-wider text-muted-foreground',
