@@ -1,0 +1,36 @@
+{
+  "name": "tattoo-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run --cwd apps/web dev",
+    "build": "bun run --cwd apps/web build",
+    "preview": "bun run --cwd apps/web preview",
+    "deploy": "bun run --cwd apps/web deploy",
+    "lint": "bun run --cwd apps/web lint",
+    "typecheck": "bun run --cwd apps/web typecheck",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "bun run --cwd apps/web test",
+    "test:e2e": "bun run --cwd apps/web test:e2e",
+    "db:migrate": "bun run --cwd apps/web db:migrate",
+    "db:seed": "bun run --cwd apps/web db:seed",
+    "db:reset": "bun run --cwd apps/web db:reset"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "bun@1.1.42",
+  "engines": {
+    "node": ">=20"
+  }
+}

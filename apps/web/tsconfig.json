@@ -1,0 +1,64 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@/app/*": [
+        "./app/*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@tattoo/config": [
+        "../../packages/config/src/index.ts"
+      ],
+      "@tattoo/config/env": [
+        "../../packages/config/src/env.ts"
+      ],
+      "@tattoo/config/presets": [
+        "../../packages/config/src/presets.ts"
+      ],
+      "@tattoo/domain/*": [
+        "../../packages/domain/*/src/index.ts"
+      ],
+      "@tattoo/db/*": [
+        "../../packages/db/*"
+      ],
+      "@tattoo/google": [
+        "../../packages/google/src/index.ts"
+      ],
+      "@tattoo/whatsapp": [
+        "../../packages/whatsapp/src/index.ts"
+      ],
+      "@tattoo/email": [
+        "../../packages/email/src/index.ts"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "allowJs": true,
+    "noEmit": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../../packages/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".open-next",
+    "dist"
+  ]
+}
