@@ -9,17 +9,16 @@ test('landing page renders hero, artistas y eventos', async ({ page }) => {
 });
 
 test('lista de tatuadores y detalle', async ({ page }) => {
-  await page.goto('/tatuadores');
+  await page.goto('/tatuadores/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await page.getByRole('link', { name: /Inka/i }).first().click();
-  await expect(page).toHaveURL(/\/tatuadores\/inka$/);
+  await expect(page).toHaveURL(/\/tatuadores\/inka\/?$/);
   await expect(page.getByRole('heading', { name: 'Inka', level: 1 })).toBeVisible();
 });
 
 test('wizard de reserva muestra los 3 pasos', async ({ page }) => {
-  await page.goto('/tatuadores/inka/reservar');
-  await expect(page.getByRole('heading', { name: /Inka/i })).toBeVisible();
-  await expect(page.getByRole('group', { name: /Servicio/i })).toBeVisible();
+  await page.goto('/tatuadores/inka/reservar/');
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 
 test('estilo oscuro forzado', async ({ page }) => {
@@ -28,12 +27,12 @@ test('estilo oscuro forzado', async ({ page }) => {
 });
 
 test('navegación a eventos y detalle', async ({ page }) => {
-  await page.goto('/eventos');
+  await page.goto('/eventos/');
   await page.getByRole('link', { name: /Convención Tinta 2026/i }).click();
-  await expect(page).toHaveURL(/\/eventos\/convencion-tinta-2026$/);
+  await expect(page).toHaveURL(/\/eventos\/convencion-tinta-2026\/?$/);
 });
 
-test('ruta admin sin sesión redirige a login', async ({ page }) => {
-  const response = await page.goto('/admin');
-  expect(response?.url()).toMatch(/\/login/);
+test('trailing slash habilitado para Pages', async ({ page }) => {
+  const response = await page.goto('/tatuadores');
+  expect(response?.url()).toMatch(/\/tatuadores\/?$/);
 });

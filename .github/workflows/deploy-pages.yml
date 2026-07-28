@@ -1,0 +1,50 @@
+name: deploy-pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.1.42
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Format
+        run: bun run format:check
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Unit tests
+        run: bun run test
+      - name: Build static export
+        run: bun run build
+        env:
+          GITHUB_PAGES: 'true'
+          APP_URL: https://azzzako.github.io/tattoo-studio
+          STUDIO_ID: '00000000-0000-0000-0000-000000000001'
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/out
+      - id: deployment
+        uses: actions/deploy-pages@v4
