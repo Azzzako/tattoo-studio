@@ -11,10 +11,14 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(items) {
+        setAll(items: Array<{ name: string; value: string; options?: Parameters<typeof cookieStore.set>[2] }>) {
           try {
             for (const { name, value, options } of items) {
-              cookieStore.set(name, value, options);
+              if (options) {
+                cookieStore.set(name, value, options);
+              } else {
+                cookieStore.set(name, value);
+              }
             }
           } catch {
             // ignored in server components

@@ -2,35 +2,19 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark';
+type Theme = 'dark';
 
-const ThemeContext = createContext<{ theme: Theme; setTheme: (t: Theme) => void } | null>(null);
-
-const STORAGE_KEY = 'tattoo-studio.theme';
-
-function readStoredTheme(): Theme {
-  if (typeof document === 'undefined') return 'light';
-  return (document.documentElement.dataset.theme as Theme | undefined) ?? 'light';
-}
+const ThemeContext = createContext<{ theme: Theme } | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(readStoredTheme);
+  const [theme] = useState<Theme>('dark');
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (stored && stored !== theme) {
-      document.documentElement.dataset.theme = stored;
-      setThemeState(stored);
-    }
-  }, [theme]);
+    document.documentElement.dataset.theme = 'dark';
+    document.documentElement.style.colorScheme = 'dark';
+  }, []);
 
-  const setTheme = (next: Theme) => {
-    document.documentElement.dataset.theme = next;
-    localStorage.setItem(STORAGE_KEY, next);
-    setThemeState(next);
-  };
-
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

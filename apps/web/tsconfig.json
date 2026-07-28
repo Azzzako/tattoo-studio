@@ -24,8 +24,29 @@
       "@tattoo/config/presets": [
         "../../packages/config/src/presets.ts"
       ],
-      "@tattoo/domain/*": [
-        "../../packages/domain/*/src/index.ts"
+      "@tattoo/domain": [
+        "../../packages/domain/src/index.ts"
+      ],
+      "@tattoo/domain/booking": [
+        "../../packages/domain/src/booking/index.ts"
+      ],
+      "@tattoo/domain/booking/*": [
+        "../../packages/domain/src/booking/*"
+      ],
+      "@tattoo/domain/google": [
+        "../../packages/domain/src/google/index.ts"
+      ],
+      "@tattoo/domain/google/*": [
+        "../../packages/domain/src/google/*"
+      ],
+      "@tattoo/domain/authz": [
+        "../../packages/domain/src/authz/index.ts"
+      ],
+      "@tattoo/domain/authz/*": [
+        "../../packages/domain/src/authz/*"
+      ],
+      "@tattoo/domain/timezone": [
+        "../../packages/domain/src/timezone/index.ts"
       ],
       "@tattoo/db/*": [
         "../../packages/db/*"

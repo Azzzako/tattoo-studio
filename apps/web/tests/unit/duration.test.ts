@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addMinutes, diffMinutes, rangesOverlap } from '@tattoo/domain/booking';
+import { addMinutes, diffMinutes, rangesOverlap } from '@tattoo/domain/booking/duration';
 
 describe('duration', () => {
   it('adds minutes', () => {

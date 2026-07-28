@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { authorityConflictResolver, decryptToken, encryptToken, mapGoogleEventToBusy } from '@tattoo/domain/google';
+import { authorityConflictResolver, decryptToken, encryptToken, mapGoogleEventToBusy } from '@tattoo/domain/google/sync';
 
 describe('google sync helpers', () => {
   it('maps a confirmed event to busy', () => {

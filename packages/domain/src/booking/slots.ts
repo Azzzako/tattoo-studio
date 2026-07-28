@@ -23,7 +23,9 @@ function startOfDayInTz(date: Date, tz: string): Date {
 }
 
 function rangeFromLocal(date: Date, tz: string, time: string, minutes: number): TimeRange {
-  const [h, m] = time.split(':').map((n) => Number(n));
+  const parts = time.split(':').map((n) => Number(n));
+  const h = parts[0] ?? 0;
+  const m = parts[1] ?? 0;
   const day = startOfDayInTz(date, tz);
   const start = new Date(day);
   start.setUTCHours(h, m, 0, 0);
@@ -41,8 +43,8 @@ function isRuleEffective(rule: AvailabilityRule, day: Date): boolean {
 }
 
 function dayWeekday(date: Date, tz: string): WeekdayKey {
-  const local = new Date(date.toLocaleString('en-US', { timeZone: tz, weekday: 'short' })).toLocaleDateString('en-US', { weekday: 'short', timeZone: tz });
-  const mapped = local.toLowerCase().slice(0, 3) as WeekdayKey;
+  const formatter = new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone: tz });
+  const mapped = formatter.format(date).toLowerCase().slice(0, 3) as WeekdayKey;
   return mapped;
 }
 
@@ -76,7 +78,7 @@ export function generateSlots(input: SlotGenerationInput): Slot[] {
   const slots: Slot[] = [];
   const totalMinutes = input.service.durationMinutes + input.service.bufferMinutes;
 
-  const cursor = new Date(input.rangeStart);
+  let cursor = new Date(input.rangeStart);
   const limit = new Date(input.rangeEnd);
   while (cursor < limit) {
     const day = new Date(cursor);
@@ -107,7 +109,11 @@ export function generateSlots(input: SlotGenerationInput): Slot[] {
 }
 
 function diff(start: string, end: string): number {
-  const [sh, sm] = start.split(':').map((n) => Number(n));
-  const [eh, em] = end.split(':').map((n) => Number(n));
+  const sParts = start.split(':').map((n) => Number(n));
+  const eParts = end.split(':').map((n) => Number(n));
+  const sh = sParts[0] ?? 0;
+  const sm = sParts[1] ?? 0;
+  const eh = eParts[0] ?? 0;
+  const em = eParts[1] ?? 0;
   return eh * 60 + em - (sh * 60 + sm);
 }

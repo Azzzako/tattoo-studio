@@ -1,2 +1,2 @@
-export { env } from './env.js';
-export { tzPresets } from './presets.js';
+export { env } from './env';
+export { tzPresets } from './presets';
