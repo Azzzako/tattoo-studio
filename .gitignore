@@ -19,5 +19,6 @@ coverage
 !.vscode/extensions.json
 tests/e2e/playwright-report
 playwright/.cache
+bun.lock
 bun.lockb
 *.tsbuildinfo
