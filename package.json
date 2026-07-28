@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "dev": "bun run --cwd apps/web dev",
-    "build": "bun run --cwd apps/web build",
+    "build": "bun run --cwd apps/web build:cloudflare",
+    "build:next": "bun run --cwd apps/web build",
     "preview": "bun run --cwd apps/web preview",
     "deploy": "bun run --cwd apps/web deploy",
     "lint": "bun run --cwd apps/web lint",
