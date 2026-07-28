@@ -49,6 +49,10 @@ const EVENTS: Record<
   },
 };
 
+export function generateStaticParams() {
+  return Object.keys(EVENTS).map((slug) => ({ slug }));
+}
+
 export default function EventDetailPage({ params }: EventPageProps) {
   const event = EVENTS[params.slug];
   if (!event) notFound();

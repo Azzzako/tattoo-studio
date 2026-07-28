@@ -96,6 +96,10 @@ const SOCIAL_ICONS = {
   website: Globe,
 };
 
+export function generateStaticParams() {
+  return Object.keys(ARTISTS).map((slug) => ({ slug }));
+}
+
 export default function ArtistDetailPage({ params }: ArtistPageProps) {
   const artist = ARTISTS[params.slug];
   if (!artist) notFound();
