@@ -17,13 +17,19 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(items) {
+        setAll(
+          items: Array<{ name: string; value: string; options?: Parameters<typeof response.cookies.set>[2] }>,
+        ) {
           for (const { name, value } of items) {
             request.cookies.set(name, value);
           }
           response = NextResponse.next({ request });
           for (const { name, value, options } of items) {
-            response.cookies.set(name, value, options);
+            if (options) {
+              response.cookies.set(name, value, options);
+            } else {
+              response.cookies.set(name, value);
+            }
           }
         },
       },
