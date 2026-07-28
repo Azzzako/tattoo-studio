@@ -23,6 +23,6 @@ export function SectionReveal({
   ...props
 }: SectionRevealProps) {
   const ref = React.useRef<HTMLElement>(null);
-  useStaggerChildren(ref, selector, stagger);
+  useStaggerChildren(ref, { stagger, selector });
   return React.createElement(Tag, { ref, className: cn(className), ...props }, children);
 }
