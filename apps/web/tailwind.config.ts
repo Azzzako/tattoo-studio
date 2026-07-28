@@ -30,9 +30,10 @@ const config: Config = {
           900: 'hsl(var(--ink-900) / <alpha-value>)',
           950: 'hsl(var(--ink-950) / <alpha-value>)',
         },
-        accent: {
-          DEFAULT: 'hsl(var(--accent) / <alpha-value>)',
-          foreground: 'hsl(var(--accent-foreground) / <alpha-value>)',
+        gold: {
+          DEFAULT: 'hsl(var(--gold) / <alpha-value>)',
+          foreground: 'hsl(var(--gold-foreground) / <alpha-value>)',
+          muted: 'hsl(var(--gold-muted) / <alpha-value>)',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
@@ -74,11 +75,26 @@ const config: Config = {
           from: { opacity: '0', transform: 'translateY(8px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
+        'fade-up': {
+          from: { opacity: '0', transform: 'translateY(24px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'line-grow': {
+          from: { transform: 'scaleX(0)' },
+          to: { transform: 'scaleX(1)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.4s ease-out both',
+        'fade-up': 'fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'line-grow': 'line-grow 0.8s cubic-bezier(0.65, 0, 0.35, 1) both',
+        shimmer: 'shimmer 2s linear infinite',
       },
     },
   },
