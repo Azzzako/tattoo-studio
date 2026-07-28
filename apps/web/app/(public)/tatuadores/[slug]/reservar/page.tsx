@@ -1,6 +1,7 @@
 'use client';
 
 import { useReducer, useState } from 'react';
+import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Calendar, CheckCircle2, Mail, MapPin, Phone, User } from 'lucide-react';
 import { notFound, useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
@@ -96,7 +97,7 @@ export default function BookingWizardPage() {
           description={`Te escribiremos a ${state.contact.email} en menos de 24 horas para confirmar con ${slug}.`}
           action={
             <Button asChild variant="outline">
-              <a href="/">Volver al inicio</a>
+              <Link href="/">Volver al inicio</Link>
             </Button>
           }
           className="mb-8"
