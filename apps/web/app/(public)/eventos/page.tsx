@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, Calendar, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ImagePlaceholder } from '@/components/ui/image-placeholder';
+import { TextReveal } from '@/components/animations/text-reveal';
 
 const EVENTS = [
   {
@@ -35,9 +36,12 @@ export default function EventsPage() {
     <div className="container py-20 md:py-28">
       <header className="mx-auto mb-16 max-w-3xl text-center">
         <p className="text-gold mb-3 text-xs uppercase tracking-[0.2em]">Eventos</p>
-        <h1 className="font-display text-6xl leading-[1] md:text-7xl">
-          Convenciones, guest spots y presentaciones.
-        </h1>
+        <TextReveal
+          as="h1"
+          text="Convenciones, guest spots y presentaciones."
+          options={{ stagger: 0.04 }}
+          className="font-display text-6xl leading-[1] md:text-7xl"
+        />
       </header>
 
       <div className="grid gap-8">

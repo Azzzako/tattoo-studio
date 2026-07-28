@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ImagePlaceholder } from '@/components/ui/image-placeholder';
+import { TextReveal } from '@/components/animations/text-reveal';
 
 interface EventPageProps {
   params: { slug: string };
@@ -74,7 +75,12 @@ export default function EventDetailPage({ params }: EventPageProps) {
               </Link>
             </Button>
             <p className="text-gold text-xs uppercase tracking-[0.2em]">{event.date}</p>
-            <h1 className="font-display text-6xl leading-[0.95] md:text-7xl">{event.title}</h1>
+            <TextReveal
+              as="h1"
+              text={event.title}
+              options={{ stagger: 0.05 }}
+              className="font-display text-6xl leading-[0.95] md:text-7xl"
+            />
             <ul className="text-ink-300 space-y-2 text-sm">
               <li className="flex items-center gap-2">
                 <MapPin className="text-gold h-4 w-4" />

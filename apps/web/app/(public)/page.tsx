@@ -5,7 +5,10 @@ import { Button } from '@/components/ui/button';
 import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { Carousel, CarouselItem } from '@/components/ui/carousel';
 import { Marquee } from '@/components/ui/marquee';
-import { SectionReveal } from '@/components/animations/section-reveal';
+import { CountUp } from '@/components/animations/count-up';
+import { MaskReveal } from '@/components/animations/mask-reveal';
+import { Parallax } from '@/components/animations/parallax';
+import { TextReveal } from '@/components/animations/text-reveal';
 
 const STYLES = [
   'Blackwork',
@@ -19,6 +22,7 @@ const STYLES = [
   'Japonés',
   'Geométrico',
 ];
+
 const ARTISTS = [
   {
     slug: 'inka',
@@ -39,7 +43,9 @@ const ARTISTS = [
     bio: 'Retratos que respiran sobre piel.',
   },
 ];
+
 const PORTFOLIO = ['inka-1', 'inka-2', 'mara-1', 'yael-1', 'inka-3', 'mara-2'];
+
 const EVENTS = [
   {
     slug: 'convencion-tinta-2026',
@@ -58,22 +64,30 @@ export default function HomePage() {
         <div className="container grid gap-12 py-20 md:grid-cols-[1.1fr_1fr] md:py-32">
           <div className="flex flex-col gap-8">
             <Badge variant="default" className="w-fit">
-              <Sparkles className="h-3 w-3" />
+              <Sparkles className="h-3 w-3 animate-pulse" />
               Agenda abierta · Semana 5
             </Badge>
             <h1 className="font-display text-6xl leading-[0.95] tracking-tight md:text-[7.5rem]">
-              Tinta, <span className="text-gold">historia</span>
-              <br />y oficio.
+              <TextReveal as="span" text="Tinta," />
+              <br />
+              <TextReveal
+                as="span"
+                text="historia y oficio."
+                options={{ delay: 0.15, stagger: 0.06, y: 24 }}
+                className="text-gold"
+              />
             </h1>
-            <p className="text-ink-200 max-w-lg text-base leading-relaxed md:text-lg">
-              Insigne Tattoo es un estudio independiente en Ciudad de México. Trabajamos contigo en
-              cada decisión, desde el trazo hasta la cura final.
-            </p>
+            <TextReveal
+              as="p"
+              text="Insigne Tattoo es un estudio independiente en Ciudad de México. Trabajamos contigo en cada decisión, desde el trazo hasta la cura final."
+              options={{ stagger: 0.02, y: 16, delay: 0.4 }}
+              className="text-ink-200 max-w-lg text-base leading-relaxed md:text-lg"
+            />
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg">
                 <Link href="/tatuadores/inka/reservar">
                   Reservar cita
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
@@ -83,20 +97,29 @@ export default function HomePage() {
             <dl className="border-border mt-8 grid grid-cols-3 gap-6 border-t pt-8 text-sm">
               <div>
                 <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Tatuadores</dt>
-                <dd className="font-display text-foreground mt-1 text-3xl">8</dd>
+                <dd className="font-display text-foreground mt-1 text-3xl">
+                  <CountUp to={8} duration={1.6} />
+                </dd>
               </div>
               <div>
                 <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Años</dt>
-                <dd className="font-display text-foreground mt-1 text-3xl">12</dd>
+                <dd className="font-display text-foreground mt-1 text-3xl">
+                  <CountUp to={12} duration={1.6} delay={0.1} />
+                </dd>
               </div>
               <div>
                 <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Estilos</dt>
-                <dd className="font-display text-foreground mt-1 text-3xl">10+</dd>
+                <dd className="font-display text-foreground mt-1 text-3xl">
+                  <CountUp to={10} duration={1.6} delay={0.2} suffix="+" />
+                </dd>
               </div>
             </dl>
           </div>
-          <div className="relative">
-            <div className="border-border relative aspect-[4/5] overflow-hidden border">
+          <Parallax speed={0.12} className="relative">
+            <MaskReveal
+              options={{ duration: 1.4, delay: 0.2 }}
+              className="border-border relative aspect-[4/5] overflow-hidden border"
+            >
               <ImagePlaceholder
                 seed="insigne-hero"
                 ratio="4/5"
@@ -108,7 +131,7 @@ export default function HomePage() {
                 </p>
                 <p className="text-ink-300 mt-1 text-xs uppercase tracking-[0.18em]">Inka · 6h</p>
               </div>
-            </div>
+            </MaskReveal>
             <div className="border-gold/40 bg-background glow-gold absolute -bottom-6 -left-6 hidden border p-4 md:block">
               <div className="text-gold flex items-center gap-2 text-xs uppercase tracking-[0.18em]">
                 <Star className="fill-gold text-gold h-3.5 w-3.5" />
@@ -118,14 +141,14 @@ export default function HomePage() {
                 «La atención al detalle es de otro nivel. Salí con algo que nunca olvidaré.»
               </p>
             </div>
-          </div>
+          </Parallax>
         </div>
         <div className="border-border bg-ink-950 border-t">
           <Marquee speed={50}>
             {STYLES.map((style) => (
               <span
                 key={style}
-                className="font-display text-ink-300 text-3xl uppercase tracking-[0.2em]"
+                className="font-display text-ink-300 hover:text-gold text-3xl uppercase tracking-[0.2em] transition-colors"
               >
                 {style} <span className="text-gold">·</span>
               </span>
@@ -140,9 +163,12 @@ export default function HomePage() {
           <div className="mb-12 flex items-end justify-between gap-6">
             <div>
               <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Tatuadores</p>
-              <h2 id="tatuadores" className="font-display text-5xl md:text-6xl">
-                Las manos detrás de la tinta.
-              </h2>
+              <TextReveal
+                as="h2"
+                text="Las manos detrás de la tinta."
+                options={{ stagger: 0.04 }}
+                className="font-display text-5xl md:text-6xl"
+              />
             </div>
             <Button
               asChild
@@ -155,20 +181,24 @@ export default function HomePage() {
               </Link>
             </Button>
           </div>
-          <SectionReveal className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-3">
             {ARTISTS.map((artist) => (
               <Link key={artist.slug} href={`/tatuadores/${artist.slug}`} className="group block">
                 <div className="border-border relative aspect-[3/4] overflow-hidden border">
-                  <ImagePlaceholder
-                    seed={`artist-${artist.slug}`}
-                    ratio="3/4"
-                    overlay="fade"
-                    alt={`Retrato de ${artist.name}`}
-                  />
+                  <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105">
+                    <ImagePlaceholder
+                      seed={`artist-${artist.slug}`}
+                      ratio="3/4"
+                      overlay="fade"
+                      alt={`Retrato de ${artist.name}`}
+                    />
+                  </div>
                   <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-6">
-                    <p className="text-gold text-xs uppercase tracking-[0.2em]">{artist.styles}</p>
-                    <h3 className="font-display text-foreground group-hover:text-gold mt-2 text-4xl transition-colors">
+                    <p className="text-gold text-xs uppercase tracking-[0.2em] transition-transform duration-500 group-hover:-translate-y-1">
+                      {artist.styles}
+                    </p>
+                    <h3 className="font-display text-foreground group-hover:text-gold mt-2 text-4xl transition-colors duration-500">
                       {artist.name}
                     </h3>
                   </div>
@@ -176,7 +206,7 @@ export default function HomePage() {
                 <p className="text-ink-300 mt-4 text-sm">{artist.bio}</p>
               </Link>
             ))}
-          </SectionReveal>
+          </div>
         </div>
       </section>
 
@@ -185,20 +215,25 @@ export default function HomePage() {
         <div className="container">
           <div className="mb-12 max-w-2xl">
             <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Portafolio</p>
-            <h2 id="portafolio" className="font-display text-5xl md:text-6xl">
-              Trabajos recientes.
-            </h2>
+            <TextReveal
+              as="h2"
+              text="Trabajos recientes."
+              options={{ stagger: 0.04 }}
+              className="font-display text-5xl md:text-6xl"
+            />
           </div>
           <Carousel className="w-full">
             {PORTFOLIO.map((seed, i) => (
               <CarouselItem key={seed} className="basis-full md:basis-1/2 lg:basis-1/3">
-                <div className="border-border relative aspect-[3/4] overflow-hidden border">
-                  <ImagePlaceholder
-                    seed={`portfolio-${seed}`}
-                    ratio="3/4"
-                    alt={`Trabajo ${i + 1}`}
-                    overlay="fade"
-                  />
+                <div className="border-border group relative aspect-[3/4] overflow-hidden border">
+                  <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105">
+                    <ImagePlaceholder
+                      seed={`portfolio-${seed}`}
+                      ratio="3/4"
+                      alt={`Trabajo ${i + 1}`}
+                      overlay="fade"
+                    />
+                  </div>
                   <div className="absolute inset-x-0 bottom-0 p-4">
                     <p className="text-gold text-xs uppercase tracking-[0.2em]">
                       {ARTISTS[i % ARTISTS.length]?.name}
@@ -217,9 +252,12 @@ export default function HomePage() {
           <div className="mb-12 flex items-end justify-between gap-6">
             <div>
               <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Eventos</p>
-              <h2 id="eventos" className="font-display text-5xl md:text-6xl">
-                Convenciones y guest spots.
-              </h2>
+              <TextReveal
+                as="h2"
+                text="Convenciones y guest spots."
+                options={{ stagger: 0.04 }}
+                className="font-display text-5xl md:text-6xl"
+              />
             </div>
             <Button
               asChild
@@ -237,18 +275,18 @@ export default function HomePage() {
               <Link
                 key={event.slug}
                 href={`/eventos/${event.slug}`}
-                className="border-border bg-ink-900 hover:border-gold/50 group relative flex flex-col justify-between gap-8 border p-8 transition-colors"
+                className="border-border bg-ink-900 hover:border-gold/50 group relative flex flex-col justify-between gap-8 border p-8 transition-colors duration-500 hover:-translate-y-1"
               >
                 <div>
                   <p className="text-gold text-xs uppercase tracking-[0.2em]">{event.date}</p>
-                  <h3 className="font-display text-foreground group-hover:text-gold mt-4 text-4xl transition-colors">
+                  <h3 className="font-display text-foreground group-hover:text-gold mt-4 text-4xl transition-colors duration-500 md:text-5xl">
                     {event.title}
                   </h3>
                   <p className="text-ink-300 mt-2 text-sm">{event.city}</p>
                 </div>
-                <span className="text-ink-400 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em]">
+                <span className="text-ink-400 group-hover:text-gold inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] transition-all duration-500 group-hover:gap-3">
                   Conoce a nuestros tatuadores
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-1" />
                 </span>
               </Link>
             ))}
@@ -265,9 +303,12 @@ export default function HomePage() {
             <div className="relative grid gap-8 md:grid-cols-[1.5fr_1fr] md:items-end">
               <div>
                 <p className="text-gold mb-4 text-xs uppercase tracking-[0.2em]">¿Listo?</p>
-                <h2 className="font-display text-5xl leading-tight md:text-7xl">
-                  Reservar con Insigne.
-                </h2>
+                <TextReveal
+                  as="h2"
+                  text="Reservar con Insigne."
+                  options={{ stagger: 0.04 }}
+                  className="font-display text-5xl leading-tight md:text-7xl"
+                />
                 <p className="text-ink-200 mt-6 max-w-xl text-base">
                   Cuéntanos tu idea. Te responderemos en menos de 24 horas para agendar una consulta
                   con el tatuador ideal para tu pieza.

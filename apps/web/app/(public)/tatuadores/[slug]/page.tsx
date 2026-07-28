@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Carousel, CarouselItem } from '@/components/ui/carousel';
 import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { PortfolioItem } from '@/components/portfolio/portfolio-item';
+import { MaskReveal } from '@/components/animations/mask-reveal';
+import { TextReveal } from '@/components/animations/text-reveal';
 
 interface ArtistPageProps {
   params: { slug: string };
@@ -123,8 +125,18 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
             <p className="text-gold text-xs uppercase tracking-[0.2em]">
               {artist.styles.join(' · ')}
             </p>
-            <h1 className="font-display text-6xl leading-[0.95] md:text-8xl">{artist.name}</h1>
-            <p className="font-display text-ink-200 text-3xl">{artist.headline}</p>
+            <TextReveal
+              as="h1"
+              text={artist.name}
+              options={{ stagger: 0.06 }}
+              className="font-display text-6xl leading-[0.95] md:text-8xl"
+            />
+            <TextReveal
+              as="p"
+              text={artist.headline}
+              options={{ stagger: 0.04, delay: 0.2, y: 16 }}
+              className="font-display text-ink-200 text-3xl"
+            />
             <p className="text-ink-300 max-w-xl text-base leading-relaxed">{artist.bio}</p>
             <dl className="border-border mt-4 flex flex-wrap gap-6 border-t pt-6 text-sm">
               <div>
@@ -170,13 +182,16 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
             </div>
           </div>
           <div className="relative">
-            <div className="border-border relative aspect-[4/5] overflow-hidden border">
+            <MaskReveal
+              options={{ duration: 1.4 }}
+              className="border-border relative aspect-[4/5] overflow-hidden border"
+            >
               <ImagePlaceholder
                 seed={`artist-hero-${params.slug}`}
                 ratio="4/5"
                 alt={`Retrato editorial de ${artist.name}`}
               />
-            </div>
+            </MaskReveal>
           </div>
         </div>
       </header>
@@ -189,7 +204,12 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
               Una conversación larga.
             </h2>
           </div>
-          <p className="font-display text-ink-100 text-2xl leading-relaxed">{artist.longBio}</p>
+          <TextReveal
+            as="p"
+            text={artist.longBio}
+            options={{ stagger: 0.015, y: 12 }}
+            className="font-display text-ink-100 text-2xl leading-relaxed"
+          />
         </div>
       </section>
 

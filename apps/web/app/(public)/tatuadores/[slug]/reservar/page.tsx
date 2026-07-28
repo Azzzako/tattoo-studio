@@ -239,9 +239,9 @@ export default function BookingWizardPage() {
         }}
         className="grid gap-8 md:grid-cols-[1.5fr_1fr]"
       >
-        <div className="min-h-[28rem]">
+        <div key={`step-${state.step}`} className="animate-fade-up min-h-[28rem]">
           {state.step === 1 && (
-            <fieldset className="space-y-4">
+            <fieldset className="[&>label]:animate-fade-up [&>legend]:animate-fade-up space-y-4">
               <legend className="font-display mb-2 text-2xl">Elige el servicio</legend>
               {SERVICES.map((service) => (
                 <label
@@ -273,7 +273,7 @@ export default function BookingWizardPage() {
           )}
 
           {state.step === 2 && (
-            <div className="grid gap-8 md:grid-cols-[1fr_auto]">
+            <div className="animate-fade-up grid gap-8 md:grid-cols-[1fr_auto]">
               <div>
                 <p className="font-display mb-3 text-2xl">Selecciona el día</p>
                 <div className="border-border border p-2">
@@ -312,7 +312,7 @@ export default function BookingWizardPage() {
           )}
 
           {state.step === 3 && (
-            <div className="space-y-4">
+            <div className="animate-fade-up space-y-4">
               <p className="font-display text-2xl">Cuéntanos tu idea</p>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
