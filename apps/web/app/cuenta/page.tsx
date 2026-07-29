@@ -4,30 +4,8 @@ import { CalendarDays, UserSquare2, ShieldCheck, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getCurrentUser, getCurrentProfile } from '@/lib/supabase/current-user';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
-import {
-  ScheduleBadge,
-  ScheduleText,
-  type ScheduleKind,
-} from '@/components/artists/schedule-badge';
-
-type ArtistRow = {
-  id: string;
-  slug: string;
-  display_name: string;
-  bio: string | null;
-  headline: string | null;
-  city: string | null;
-  years_active: number | null;
-  schedule_kind: ScheduleKind | null;
-  schedule_weeks: number | null;
-  featured: boolean;
-  is_active: boolean;
-  instagram: string | null;
-  twitter: string | null;
-  youtube: string | null;
-  website: string | null;
-};
+import { ScheduleBadge, ScheduleText } from '@/components/artists/schedule-badge';
+import { getArtistByProfileId, type ArtistRow } from '@/lib/supabase/artists-cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,18 +13,9 @@ export default async function CuentaLanding() {
   const [user, profile] = await Promise.all([getCurrentUser(), getCurrentProfile()]);
   if (!user || !profile) return null;
 
-  const supabase = await createSupabaseServerClient();
-
   let artistRow: ArtistRow | null = null;
   if (profile.role === 'artist') {
-    const { data } = await supabase
-      .from('tattoo_artists')
-      .select(
-        'id, slug, display_name, bio, headline, city, years_active, schedule_kind, schedule_weeks, featured, is_active, instagram, twitter, youtube, website',
-      )
-      .eq('profile_id', user.id)
-      .limit(1);
-    artistRow = (data as ArtistRow[] | null)?.[0] ?? null;
+    artistRow = await getArtistByProfileId(user.id);
   }
 
   const cards: Array<{

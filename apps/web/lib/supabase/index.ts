@@ -8,3 +8,18 @@ export {
 export { createSupabaseAdminClient, type TypedSupabaseAdminClient } from './admin';
 
 export { updateSupabaseSession } from './middleware';
+
+export {
+  getCurrentUser,
+  getCurrentProfile,
+  requireUser,
+  requireProfile,
+  type Profile,
+} from './current-user';
+
+export {
+  getArtistsList,
+  getArtistBySlug,
+  getArtistByProfileId,
+  type ArtistRow,
+} from './artists-cache';

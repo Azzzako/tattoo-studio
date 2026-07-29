@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { AvatarUpload } from './avatar-upload';
 import { ProfileForm } from './profile-form';
 import { getCurrentUser, getCurrentProfile } from '@/lib/supabase/current-user';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { getArtistByProfileId } from '@/lib/supabase/artists-cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,16 +15,11 @@ export default async function ArtistProfilePage() {
     redirect('/cuenta?message=Solo%20tatuadores%20pueden%20editar%20perfil');
   }
 
-  const supabase = await createSupabaseServerClient();
-  const { data: artistRows, error: artistErr } = await supabase
-    .from('tattoo_artists')
-    .select(
-      'id, display_name, slug, headline, bio, long_bio, specialties, is_active, avatar_path, instagram, twitter, youtube, website, city, years_active, schedule_kind, schedule_weeks, profile_id',
-    )
-    .eq('profile_id', user.id)
-    .limit(5);
+  const artistRow = await getArtistByProfileId(user.id);
 
-  const artistRow = artistRows?.[0] ?? null;
+  // Per-request debug snapshot. Cheap because the read is cached; only
+  // surfaced when the lookup legitimately fails (no linked row).
+  const artistErr = artistRow ? null : { message: 'artist row not found' };
 
   if (!artistRow) {
     return (
@@ -45,7 +40,7 @@ export default async function ArtistProfilePage() {
                 profileId: profile.id,
                 profileRole: profile.role,
                 queryError: artistErr?.message ?? null,
-                rowsFound: artistRows?.length ?? 0,
+                rowFound: artistRow ? 1 : 0,
               },
               null,
               2,

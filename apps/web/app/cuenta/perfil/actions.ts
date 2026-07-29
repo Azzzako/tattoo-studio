@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { createSupabaseServerClient } from '@/lib/supabase/server';
@@ -129,9 +129,12 @@ export async function updateMyArtistProfile(
 
   if (error) return { ok: false, message: error.message };
 
+  // Target invalidation: revalidate the artist-row caches and the /admin
+  // listing, but leave the rest of `/tatuadores` alone.
+  revalidateTag('tattoo-artists:list');
+  revalidateTag(`profile:${userData.user.id}`);
   revalidatePath('/cuenta');
   revalidatePath('/cuenta/perfil');
-  revalidatePath(`/tatuadores`, 'layout');
   return { ok: true };
 }
 
@@ -155,8 +158,8 @@ export async function toggleFeaturedForArtist(formData: FormData): Promise<void>
 
   await supabase.from('tattoo_artists').update({ featured }).eq('id', artistId);
 
+  revalidateTag('tattoo-artists:list');
   revalidatePath('/admin/artists');
-  revalidatePath(`/tatuadores`, 'layout');
 }
 
 const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
@@ -225,8 +228,9 @@ export async function uploadAvatar(
 
   if (updateErr) return { ok: false, message: updateErr.message };
 
+  revalidateTag('tattoo-artists:list');
+  revalidateTag(`profile:${userData.user.id}`);
   revalidatePath('/cuenta');
   revalidatePath('/cuenta/perfil');
-  revalidatePath(`/tatuadores`, 'layout');
   return { ok: true };
 }

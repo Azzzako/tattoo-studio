@@ -8,12 +8,9 @@ import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { PortfolioItem } from '@/components/portfolio/portfolio-item';
 import { MaskReveal } from '@/components/animations/mask-reveal';
 import { TextReveal } from '@/components/animations/text-reveal';
-import {
-  ScheduleBadge,
-  ScheduleText,
-  type ScheduleKind,
-} from '@/components/artists/schedule-badge';
+import { ScheduleBadge, ScheduleText } from '@/components/artists/schedule-badge';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { getArtistBySlug } from '@/lib/supabase/artists-cache';
 
 interface ArtistPageProps {
   params: Promise<{ slug: string }>;
@@ -33,25 +30,6 @@ const SOCIAL_LABELS: Record<'instagram' | 'twitter' | 'youtube' | 'website', str
   website: 'Sitio web',
 };
 
-type ArtistRow = {
-  id: string;
-  slug: string;
-  display_name: string;
-  headline: string | null;
-  bio: string | null;
-  long_bio: string | null;
-  specialties: string[] | null;
-  city: string | null;
-  years_active: number | null;
-  schedule_kind: ScheduleKind | null;
-  schedule_weeks: number | null;
-  avatar_path: string | null;
-  instagram: string | null;
-  twitter: string | null;
-  youtube: string | null;
-  website: string | null;
-};
-
 type PortfolioRow = {
   id: string;
   storage_path: string | null;
@@ -64,20 +42,10 @@ export const dynamic = 'force-dynamic';
 
 export default async function ArtistDetailPage({ params }: ArtistPageProps) {
   const { slug } = await params;
+  const artist = await getArtistBySlug(slug);
+  if (!artist) notFound();
+
   const supabase = await createSupabaseServerClient();
-
-  const { data: artistData } = await supabase
-    .from('tattoo_artists')
-    .select(
-      'id, slug, display_name, headline, bio, long_bio, specialties, city, years_active, schedule_kind, schedule_weeks, avatar_path, instagram, twitter, youtube, website',
-    )
-    .eq('slug', slug)
-    .eq('is_active', true)
-    .maybeSingle();
-
-  if (!artistData) notFound();
-  const artist = artistData as ArtistRow;
-
   const { data: portfolioData } = await supabase
     .from('portfolio_items')
     .select('id, storage_path, seed, alt_text, style_tags')

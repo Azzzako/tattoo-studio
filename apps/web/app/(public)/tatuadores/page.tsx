@@ -5,7 +5,7 @@ import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { ArtistGrid } from '@/components/artists/artist-grid';
 import { TextReveal } from '@/components/animations/text-reveal';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { getArtistsList, type ArtistRow } from '@/lib/supabase/artists-cache';
 
 type SocialNetwork = 'instagram' | 'twitter' | 'youtube' | 'website';
 
@@ -25,22 +25,6 @@ const SOCIAL_LABELS: Record<SocialNetwork, string> = {
 
 type SocialLink = { network: SocialNetwork; url: string };
 
-type ArtistRow = {
-  id: string;
-  slug: string;
-  display_name: string;
-  headline: string | null;
-  specialties: string[] | null;
-  city: string | null;
-  years_active: number | null;
-  avatar_path: string | null;
-  featured: boolean;
-  instagram: string | null;
-  twitter: string | null;
-  youtube: string | null;
-  website: string | null;
-};
-
 function buildSocials(a: ArtistRow): SocialLink[] {
   const out: SocialLink[] = [];
   if (a.instagram) out.push({ network: 'instagram', url: `https://instagram.com/${a.instagram}` });
@@ -57,20 +41,9 @@ function buildSocials(a: ArtistRow): SocialLink[] {
 }
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export default async function ArtistsPage() {
-  const supabase = await createSupabaseServerClient();
-  const { data: rows } = await supabase
-    .from('tattoo_artists')
-    .select(
-      'id, slug, display_name, headline, specialties, city, years_active, avatar_path, featured, instagram, twitter, youtube, website',
-    )
-    .eq('is_active', true)
-    .order('featured', { ascending: false })
-    .order('display_name', { ascending: true });
-
-  const artists = (rows ?? []) as ArtistRow[];
+  const artists = await getArtistsList();
 
   return (
     <div className="container py-20 md:py-28">
