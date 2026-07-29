@@ -7,13 +7,14 @@ const basePath = isProd && process.env.GITHUB_PAGES === 'true' ? `/${repoName}` 
 const config: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  output: 'export',
   trailingSlash: true,
-  images: {
-    unoptimized: true,
-  },
   basePath,
   typedRoutes: true,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '8mb',
+    },
+  },
 };
 
 export default config;
