@@ -9,5 +9,8 @@
     ".": "./src/index.ts",
     "./env": "./src/env.ts",
     "./presets": "./src/presets.ts"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
   }
 }

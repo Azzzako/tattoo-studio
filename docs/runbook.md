@@ -77,13 +77,13 @@ wrangler secret put CRON_SECRET
 
 ## Incidentes
 
-| Síntoma | Acción |
-|---|---|
-| Doble reserva | Revisar `audit_logs`; en beta es bug, no error del usuario |
-| Webhook Google 410 | Iniciar sync completo desde `app/api/cron/reconcile` |
+| Síntoma                       | Acción                                                                             |
+| ----------------------------- | ---------------------------------------------------------------------------------- |
+| Doble reserva                 | Revisar `audit_logs`; en beta es bug, no error del usuario                         |
+| Webhook Google 410            | Iniciar sync completo desde `app/api/cron/reconcile`                               |
 | Notificación WhatsApp fallida | Revisar `notification_outbox.last_error`; reintentar manualmente si es transitorio |
-| Login falla | Revisar `SUPABASE_JWT_SECRET` y `SUPABASE_URL` |
-| Calendario vacío | Verificar `calendar_events`; revisar cron de renovación |
+| Login falla                   | Revisar `SUPABASE_JWT_SECRET` y `SUPABASE_URL`                                     |
+| Calendario vacío              | Verificar `calendar_events`; revisar cron de renovación                            |
 
 ## Contactos internos
 

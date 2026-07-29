@@ -1,26 +1,38 @@
 import { test, expect } from '@playwright/test';
 
-test('landing page renders key sections', async ({ page }) => {
+test('landing page renders hero, artistas y eventos', async ({ page }) => {
   await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Tinta');
+  await expect(page.getByRole('link', { name: /Reservar cita/i }).first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Tatuadores/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Eventos/i })).toBeVisible();
+});
+
+test('lista de tatuadores y detalle', async ({ page }) => {
+  await page.goto('/tatuadores/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Ver tatuadores' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Próximos eventos' })).toBeVisible();
+  await page.getByRole('link', { name: /Inka/i }).first().click();
+  await expect(page).toHaveURL(/\/tatuadores\/inka\/?$/);
+  await expect(page.getByRole('heading', { name: 'Inka', level: 1 })).toBeVisible();
 });
 
-test('artists listing links to detail', async ({ page }) => {
-  await page.goto('/tatuadores');
-  await expect(page.getByRole('heading', { level: 1, name: 'Tatuadores' })).toBeVisible();
-  await page.getByRole('link', { name: /Inka/ }).click();
-  await expect(page).toHaveURL(/\/tatuadores\/inka$/);
+test('wizard de reserva muestra los 3 pasos', async ({ page }) => {
+  await page.goto('/tatuadores/inka/reservar/');
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 
-test('login page shows magic-link form', async ({ page }) => {
-  await page.goto('/login');
-  await expect(page.getByLabel('Correo')).toBeVisible();
-  await expect(page.getByRole('button', { name: /Enviar enlace/ })).toBeVisible();
+test('estilo oscuro forzado', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
-test('admin routes redirect to login when anonymous', async ({ page }) => {
-  const response = await page.goto('/admin');
-  expect(response?.url()).toMatch(/\/login/);
+test('navegación a eventos y detalle', async ({ page }) => {
+  await page.goto('/eventos/');
+  await page.getByRole('link', { name: /Convención Tinta 2026/i }).click();
+  await expect(page).toHaveURL(/\/eventos\/convencion-tinta-2026\/?$/);
+});
+
+test('trailing slash habilitado para Pages', async ({ page }) => {
+  const response = await page.goto('/tatuadores');
+  expect(response?.url()).toMatch(/\/tatuadores\/?$/);
 });

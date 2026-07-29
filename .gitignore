@@ -22,3 +22,6 @@ playwright/.cache
 bun.lock
 bun.lockb
 *.tsbuildinfo
+
+# Public assets placeholder (fonts will be added later)
+apps/web/public/

@@ -55,7 +55,10 @@ export const ToastClose = React.forwardRef<
   <ToastPrimitive.Close
     ref={ref}
     toast-close=""
-    className={cn('absolute right-2 top-2 rounded-md p-1 text-foreground/50 hover:text-foreground', className)}
+    className={cn(
+      'text-foreground/50 hover:text-foreground absolute right-2 top-2 rounded-md p-1',
+      className,
+    )}
     {...props}
   />
 ));

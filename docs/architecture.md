@@ -84,13 +84,13 @@ Entidades principales en `packages/db/migrations/0001_init.sql`:
 
 ## Roles
 
-| Rol | Alcance |
-|---|---|
-| `anon` | Landing, portafolio público, eventos publicados, reserva sin cuenta |
-| `platform_superadmin` | Acceso total multiestudio |
-| `studio_owner` | Gestión completa del estudio |
-| `artist_admin` | Su perfil, portafolio, disponibilidad y citas |
-| `staff_readonly` | Lectura del estudio |
+| Rol                   | Alcance                                                             |
+| --------------------- | ------------------------------------------------------------------- |
+| `anon`                | Landing, portafolio público, eventos publicados, reserva sin cuenta |
+| `platform_superadmin` | Acceso total multiestudio                                           |
+| `studio_owner`        | Gestión completa del estudio                                        |
+| `artist_admin`        | Su perfil, portafolio, disponibilidad y citas                       |
+| `staff_readonly`      | Lectura del estudio                                                 |
 
 ## Observabilidad
 

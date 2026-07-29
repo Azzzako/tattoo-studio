@@ -10,17 +10,12 @@
   "scripts": {
     "dev": "bun run --cwd apps/web dev",
     "build": "bun run --cwd apps/web build",
-    "preview": "bun run --cwd apps/web preview",
-    "deploy": "bun run --cwd apps/web deploy",
-    "lint": "bun run --cwd apps/web lint",
+    "start": "bun run --cwd apps/web start",
     "typecheck": "bun run --cwd apps/web typecheck",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
     "test": "bun run --cwd apps/web test",
     "test:e2e": "bun run --cwd apps/web test:e2e",
-    "db:migrate": "bun run --cwd apps/web db:migrate",
-    "db:seed": "bun run --cwd apps/web db:seed",
-    "db:reset": "bun run --cwd apps/web db:reset"
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

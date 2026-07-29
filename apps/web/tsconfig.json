@@ -3,42 +3,21 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@/app/*": [
-        "./app/*"
-      ],
-      "@/components/*": [
-        "./components/*"
-      ],
-      "@/lib/*": [
-        "./lib/*"
-      ],
-      "@tattoo/config": [
-        "../../packages/config/src/index.ts"
-      ],
-      "@tattoo/config/env": [
-        "../../packages/config/src/env.ts"
-      ],
-      "@tattoo/config/presets": [
-        "../../packages/config/src/presets.ts"
-      ],
-      "@tattoo/domain/*": [
-        "../../packages/domain/*/src/index.ts"
-      ],
-      "@tattoo/db/*": [
-        "../../packages/db/*"
-      ],
-      "@tattoo/google": [
-        "../../packages/google/src/index.ts"
-      ],
-      "@tattoo/whatsapp": [
-        "../../packages/whatsapp/src/index.ts"
-      ],
-      "@tattoo/email": [
-        "../../packages/email/src/index.ts"
-      ]
+      "@/*": ["./*"],
+      "@/app/*": ["./app/*"],
+      "@/components/*": ["./components/*"],
+      "@/lib/*": ["./lib/*"],
+      "@tattoo/config": ["../../packages/config/src/index.ts"],
+      "@tattoo/config/env": ["../../packages/config/src/env.ts"],
+      "@tattoo/config/presets": ["../../packages/config/src/presets.ts"],
+      "@tattoo/domain": ["../../packages/domain/src/index.ts"],
+      "@tattoo/domain/booking": ["../../packages/domain/src/booking/index.ts"],
+      "@tattoo/domain/booking/*": ["../../packages/domain/src/booking/*"],
+      "@tattoo/domain/google": ["../../packages/domain/src/google/index.ts"],
+      "@tattoo/domain/google/*": ["../../packages/domain/src/google/*"],
+      "@tattoo/domain/authz": ["../../packages/domain/src/authz/index.ts"],
+      "@tattoo/domain/authz/*": ["../../packages/domain/src/authz/*"],
+      "@tattoo/domain/timezone": ["../../packages/domain/src/timezone/index.ts"]
     },
     "plugins": [
       {
@@ -55,10 +34,5 @@
     ".next/types/**/*.ts",
     "../../packages/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    ".open-next",
-    "dist"
-  ]
+  "exclude": ["node_modules", ".next", ".open-next", "dist"]
 }
