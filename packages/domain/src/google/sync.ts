@@ -1,5 +1,5 @@
 import { createHash, createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
-import type { BusyEvent, TimeRange } from '../booking/types.js';
+import type { BusyEvent, TimeRange } from '../booking/types';
 
 export interface GoogleEventInput {
   id: string;

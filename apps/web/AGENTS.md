@@ -82,11 +82,11 @@ Build verde no implica runtime sano. Probar localmente con `bun run preview` (Op
 
 ## 10. Tests por alcance
 
-| Alcance | Tipo |
-|---|---|
-| Lógica pura (slots, tokens, authz, sync) | unit |
-| Server Actions y RLS | integration |
-| Rutas y permisos | E2E con Playwright contra `bun run preview` |
+| Alcance                                  | Tipo                                        |
+| ---------------------------------------- | ------------------------------------------- |
+| Lógica pura (slots, tokens, authz, sync) | unit                                        |
+| Server Actions y RLS                     | integration                                 |
+| Rutas y permisos                         | E2E con Playwright contra `bun run preview` |
 
 ## 11. Despliegue
 

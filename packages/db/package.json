@@ -1,22 +1,15 @@
 {
   "name": "@tattoo/db",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./index.ts",
-    "./migrations/*": "./migrations/*"
-  },
+  "description": "SQL schemas, migrations y seeds de Supabase para Tattoo Studio",
   "scripts": {
-    "migrate": "tsx scripts/migrate.ts",
-    "seed": "tsx scripts/seed.ts",
-    "reset": "tsx scripts/reset.ts"
-  },
-  "dependencies": {
-    "pg": "^8.13.1"
+    "db:migrate": "supabase db push",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:reset": "supabase db reset"
   },
   "devDependencies": {
-    "@types/pg": "^8.11.10",
     "tsx": "^4.19.2"
   }
 }

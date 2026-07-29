@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { can } from '@tattoo/domain/authz';
+import { can } from '@tattoo/domain/authz/policies';
 
 describe('authz policies', () => {
   it('grants studio_owner manage on studio', () => {

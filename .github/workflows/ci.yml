@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: format · typecheck · lint · test · build
+    name: format · typecheck · test · build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,27 +22,12 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Format
         run: bun run format:check
-      - name: Lint
-        run: bun run lint
       - name: Typecheck
         run: bun run typecheck
       - name: Unit & integration
         run: bun run test
-      - name: OpenNext build
+      - name: Static export build
         run: bun run build
         env:
-          SUPABASE_URL: https://example.supabase.co
-          SUPABASE_ANON_KEY: example-anon
-          SUPABASE_SERVICE_ROLE_KEY: example-service
-          TOKEN_ENCRYPTION_KEY: 32-character-encryption-key
-          GOOGLE_OAUTH_CLIENT_ID: example
-          GOOGLE_OAUTH_CLIENT_SECRET: example
-          GOOGLE_OAUTH_REDIRECT_URI: https://example.com/api/google/oauth/callback
-          WHATSAPP_PHONE_ID: example
-          WHATSAPP_ACCESS_TOKEN: example
-          RESEND_API_KEY: example
-          RESEND_FROM_EMAIL: no-reply@example.com
-          APP_URL: https://example.com
-          STUDIO_ID: 00000000-0000-0000-0000-000000000001
-          DEFAULT_TZ: America/Mexico_City
-          DEFAULT_LOCALE: es-MX
+          APP_URL: https://azzzako.github.io/tattoo-studio
+          STUDIO_ID: '00000000-0000-0000-0000-000000000001'

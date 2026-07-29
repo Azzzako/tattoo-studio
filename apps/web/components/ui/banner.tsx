@@ -5,7 +5,7 @@ export function Banner({ children, className }: { children: React.ReactNode; cla
     <div
       role="status"
       className={cn(
-        'rounded-md border border-accent/30 bg-accent/5 px-4 py-3 text-sm text-accent-foreground',
+        'border-accent/30 bg-accent/5 text-accent-foreground rounded-md border px-4 py-3 text-sm',
         className,
       )}
     >

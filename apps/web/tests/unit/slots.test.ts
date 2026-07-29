@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { generateSlots } from '@tattoo/domain/booking';
+import { generateSlots } from '@tattoo/domain/booking/slots';
 
 describe('generateSlots', () => {
   const rules = [
@@ -39,6 +39,14 @@ describe('generateSlots', () => {
       timezone: 'UTC',
       stepMinutes: 30,
     });
-    expect(slots.every((s) => !(s.range.start >= '2026-01-06T10:30:00.000Z' && s.range.start < '2026-01-06T11:30:00.000Z'))).toBe(true);
+    expect(
+      slots.every(
+        (s: { range: { start: string; end: string } }) =>
+          !(
+            s.range.start >= '2026-01-06T10:30:00.000Z' &&
+            s.range.start < '2026-01-06T11:30:00.000Z'
+          ),
+      ),
+    ).toBe(true);
   });
 });

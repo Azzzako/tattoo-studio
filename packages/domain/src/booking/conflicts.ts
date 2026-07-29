@@ -1,5 +1,5 @@
-import { rangesOverlap } from './duration.js';
-import type { BusyEvent, TimeRange } from './types.js';
+import { rangesOverlap } from './duration';
+import type { BusyEvent, TimeRange } from './types';
 
 export function findConflicts(range: TimeRange, busy: BusyEvent[]): BusyEvent[] {
   return busy.filter((event) =>

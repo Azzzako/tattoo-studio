@@ -1,45 +1,26 @@
-'use client';
+import { Card } from '@/components/ui/card';
+import { getCurrentUser } from '@/lib/supabase/current-user';
+import { redirect } from 'next/navigation';
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { LoginForm } from './login-form';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+interface LoginPageProps {
+  searchParams: Promise<{ after?: string; message?: string }>;
+}
 
-  const onSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    setStatus('sending');
-    setTimeout(() => setStatus('sent'), 600);
-  };
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const [params, user] = await Promise.all([searchParams, getCurrentUser()]);
+  if (user) redirect(params.after && params.after.startsWith('/') ? params.after : '/');
 
   return (
-    <div className="container flex max-w-sm flex-col gap-4 py-16">
-      <h1 className="font-display text-3xl font-semibold">Acceder</h1>
-      <p className="text-sm text-muted-foreground">
-        Te enviaremos un enlace seguro por correo para iniciar sesión.
-      </p>
-      <form className="grid gap-3" onSubmit={onSubmit}>
-        <Label htmlFor="email">Correo</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-        />
-        <Button type="submit" disabled={status === 'sending'}>
-          {status === 'sent' ? 'Enlace enviado' : 'Enviar enlace'}
-        </Button>
-      </form>
-      <Link href="/tatuadores" className="text-xs text-muted-foreground">
-        Volver al sitio
-      </Link>
-    </div>
+    <Card className="space-y-6 p-8">
+      <header className="space-y-1">
+        <h1 className="font-display text-3xl">Inicia sesión</h1>
+        <p className="text-muted-foreground text-sm">
+          Te enviaremos un enlace mágico a tu correo para entrar sin contraseña.
+        </p>
+      </header>
+      <LoginForm after={params.after} initialMessage={params.message ?? null} />
+    </Card>
   );
 }
