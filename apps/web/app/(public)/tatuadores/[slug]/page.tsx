@@ -8,103 +8,101 @@ import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { PortfolioItem } from '@/components/portfolio/portfolio-item';
 import { MaskReveal } from '@/components/animations/mask-reveal';
 import { TextReveal } from '@/components/animations/text-reveal';
+import {
+  ScheduleBadge,
+  ScheduleText,
+  type ScheduleKind,
+} from '@/components/artists/schedule-badge';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 interface ArtistPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-const ARTISTS: Record<
-  string,
-  {
-    name: string;
-    headline: string;
-    bio: string;
-    longBio: string;
-    styles: string[];
-    location: string;
-    experience: number;
-    socials: Array<{ network: 'instagram' | 'twitter' | 'youtube' | 'website'; url: string }>;
-    services: Array<{ name: string; duration: string; price: string }>;
-    portfolio: string[];
-  }
-> = {
-  inka: {
-    name: 'Inka',
-    headline: 'Geometría con intención.',
-    bio: 'Siete años tatuando líneas que sobreviven al tiempo. Piezas geométricas y mandalas contemporáneos.',
-    longBio:
-      'Inka descubrió el tatuaje mientras estudiaba arquitectura. Esa formación se nota en cada pieza: precisión milimétrica, composición limpia y respeto por los ritmos naturales del cuerpo. Su trabajo se mueve entre la geometría sagrada, el blackwork denso y las composiciones contemporáneas que dialogan con el espacio negativo.',
-    styles: ['Blackwork', 'Dotwork', 'Geometría'],
-    location: 'CDMX',
-    experience: 7,
-    socials: [
-      { network: 'instagram', url: '#' },
-      { network: 'twitter', url: '#' },
-      { network: 'youtube', url: '#' },
-      { network: 'website', url: '#' },
-    ],
-    services: [
-      { name: 'Consulta + diseño', duration: '45 min', price: 'Gratis' },
-      { name: 'Sesión corta', duration: '2 h', price: 'Desde $2,500 MXN' },
-      { name: 'Sesión larga', duration: '5 h', price: 'Desde $6,000 MXN' },
-    ],
-    portfolio: ['inka-1', 'inka-2', 'inka-3', 'inka-4', 'inka-5', 'inka-6'],
-  },
-  mara: {
-    name: 'Mara',
-    headline: 'Acuarela que respira.',
-    bio: 'Especialista en piezas pequeñas con línea fina y composiciones botánicas en acuarela.',
-    longBio:
-      'Mara viene del mundo de la ilustración botánica. Eso se traduce en tatuajes con líneas finas, vibrantes pero contenidas, donde cada color respira. Trabaja especialmente composiciones inspiradas en flora y fauna local.',
-    styles: ['Color', 'Fine-line', 'Acuarela'],
-    location: 'CDMX',
-    experience: 5,
-    socials: [
-      { network: 'instagram', url: '#' },
-      { network: 'twitter', url: '#' },
-    ],
-    services: [
-      { name: 'Consulta + diseño', duration: '30 min', price: 'Gratis' },
-      { name: 'Sesión corta', duration: '1.5 h', price: 'Desde $1,800 MXN' },
-      { name: 'Sesión estándar', duration: '3 h', price: 'Desde $3,500 MXN' },
-    ],
-    portfolio: ['mara-1', 'mara-2', 'mara-3', 'mara-4'],
-  },
-  yael: {
-    name: 'Yael',
-    headline: 'Retratos sobre piel.',
-    bio: 'Retratos familiares y piezas que buscan capturar un instante, no una pose.',
-    longBio:
-      'Yael lleva casi una década tatuando retratos que respiran. Su trabajo es técnico, paciente y profundamente humano: cada pieza es una conversación que puede durar meses antes de tocar la piel.',
-    styles: ['Realismo', 'Microrealismo'],
-    location: 'CDMX',
-    experience: 9,
-    socials: [
-      { network: 'instagram', url: '#' },
-      { network: 'youtube', url: '#' },
-    ],
-    services: [
-      { name: 'Consulta', duration: '60 min', price: 'Gratis' },
-      { name: 'Sesión estándar', duration: '4 h', price: 'Desde $5,500 MXN' },
-    ],
-    portfolio: ['yael-1', 'yael-2', 'yael-3'],
-  },
-};
-
-const SOCIAL_ICONS = {
+const SOCIAL_ICONS: Record<'instagram' | 'twitter' | 'youtube' | 'website', typeof Instagram> = {
   instagram: Instagram,
   twitter: Twitter,
   youtube: Youtube,
   website: Globe,
 };
 
-export function generateStaticParams() {
-  return Object.keys(ARTISTS).map((slug) => ({ slug }));
-}
+const SOCIAL_LABELS: Record<'instagram' | 'twitter' | 'youtube' | 'website', string> = {
+  instagram: 'Instagram',
+  twitter: 'X',
+  youtube: 'YouTube',
+  website: 'Sitio web',
+};
 
-export default function ArtistDetailPage({ params }: ArtistPageProps) {
-  const artist = ARTISTS[params.slug];
-  if (!artist) notFound();
+type ArtistRow = {
+  id: string;
+  slug: string;
+  display_name: string;
+  headline: string | null;
+  bio: string | null;
+  long_bio: string | null;
+  specialties: string[] | null;
+  city: string | null;
+  years_active: number | null;
+  schedule_kind: ScheduleKind | null;
+  schedule_weeks: number | null;
+  avatar_path: string | null;
+  instagram: string | null;
+  twitter: string | null;
+  youtube: string | null;
+  website: string | null;
+};
+
+type PortfolioRow = {
+  id: string;
+  storage_path: string | null;
+  seed: string | null;
+  alt_text: string | null;
+  style_tags: string[] | null;
+};
+
+export const dynamic = 'force-dynamic';
+
+export default async function ArtistDetailPage({ params }: ArtistPageProps) {
+  const { slug } = await params;
+  const supabase = await createSupabaseServerClient();
+
+  const { data: artistData } = await supabase
+    .from('tattoo_artists')
+    .select(
+      'id, slug, display_name, headline, bio, long_bio, specialties, city, years_active, schedule_kind, schedule_weeks, avatar_path, instagram, twitter, youtube, website',
+    )
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .maybeSingle();
+
+  if (!artistData) notFound();
+  const artist = artistData as ArtistRow;
+
+  const { data: portfolioData } = await supabase
+    .from('portfolio_items')
+    .select('id, storage_path, seed, alt_text, style_tags')
+    .eq('artist_id', artist.id)
+    .eq('is_published', true)
+    .order('created_at', { ascending: false })
+    .limit(24);
+  const portfolio = (portfolioData ?? []) as PortfolioRow[];
+
+  const socials: Array<{ network: 'instagram' | 'twitter' | 'youtube' | 'website'; url: string }> =
+    [];
+  if (artist.instagram)
+    socials.push({ network: 'instagram', url: `https://instagram.com/${artist.instagram}` });
+  if (artist.twitter)
+    socials.push({ network: 'twitter', url: `https://twitter.com/${artist.twitter}` });
+  if (artist.youtube)
+    socials.push({
+      network: 'youtube',
+      url: artist.youtube.startsWith('@')
+        ? `https://youtube.com/${artist.youtube}`
+        : `https://youtube.com/@${artist.youtube}`,
+    });
+  if (artist.website) socials.push({ network: 'website', url: artist.website });
+
+  const specialties = artist.specialties ?? [];
 
   return (
     <article>
@@ -123,43 +121,67 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
               </Link>
             </Button>
             <p className="text-gold text-xs uppercase tracking-[0.2em]">
-              {artist.styles.join(' · ')}
+              {specialties.join(' · ') || 'Tatuador'}
             </p>
             <TextReveal
               as="h1"
-              text={artist.name}
+              text={artist.display_name}
               options={{ stagger: 0.06 }}
               className="font-display text-6xl leading-[0.95] md:text-8xl"
             />
-            <TextReveal
-              as="p"
-              text={artist.headline}
-              options={{ stagger: 0.04, delay: 0.2, y: 16 }}
-              className="font-display text-ink-200 text-3xl"
-            />
-            <p className="text-ink-300 max-w-xl text-base leading-relaxed">{artist.bio}</p>
+            {artist.headline && (
+              <TextReveal
+                as="p"
+                text={artist.headline}
+                options={{ stagger: 0.04, delay: 0.2, y: 16 }}
+                className="font-display text-ink-200 text-3xl"
+              />
+            )}
+            {artist.bio && (
+              <p className="text-ink-300 max-w-xl text-base leading-relaxed">{artist.bio}</p>
+            )}
+
+            {artist.schedule_kind && (
+              <div className="space-y-2">
+                <ScheduleBadge kind={artist.schedule_kind} weeks={artist.schedule_weeks} />
+                <p className="text-ink-300 text-sm">
+                  <ScheduleText kind={artist.schedule_kind} weeks={artist.schedule_weeks} />
+                </p>
+              </div>
+            )}
+
             <dl className="border-border mt-4 flex flex-wrap gap-6 border-t pt-6 text-sm">
-              <div>
-                <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Ciudad</dt>
-                <dd className="text-ink-100 mt-1 flex items-center gap-2">
-                  <MapPin className="text-gold h-3.5 w-3.5" />
-                  {artist.location}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Años tatuando</dt>
-                <dd className="text-ink-100 mt-1">{artist.experience}</dd>
-              </div>
+              {artist.city && (
+                <div>
+                  <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Ciudad</dt>
+                  <dd className="text-ink-100 mt-1 flex items-center gap-2">
+                    <MapPin className="text-gold h-3.5 w-3.5" />
+                    {artist.city}
+                  </dd>
+                </div>
+              )}
+              {artist.years_active !== null && (
+                <div>
+                  <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">
+                    Años tatuando
+                  </dt>
+                  <dd className="text-ink-100 mt-1">{artist.years_active}</dd>
+                </div>
+              )}
               <div>
                 <dt className="text-ink-400 text-xs uppercase tracking-[0.18em]">Agenda</dt>
                 <dd className="text-ink-100 mt-1 flex items-center gap-2">
                   <Calendar className="text-gold h-3.5 w-3.5" />
-                  Cierra en ~3 semanas
+                  {artist.schedule_kind ? (
+                    <ScheduleText kind={artist.schedule_kind} weeks={artist.schedule_weeks} />
+                  ) : (
+                    'Por definir'
+                  )}
                 </dd>
               </div>
             </dl>
             <div className="flex flex-wrap gap-3 pt-4">
-              {artist.socials.map((social) => {
+              {socials.map((social) => {
                 const Icon = SOCIAL_ICONS[social.network];
                 return (
                   <Button
@@ -171,13 +193,15 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
                   >
                     <a href={social.url} rel="noreferrer" target="_blank">
                       <Icon className="h-3.5 w-3.5" />
-                      {social.network}
+                      {SOCIAL_LABELS[social.network]}
                     </a>
                   </Button>
                 );
               })}
               <Button asChild size="sm">
-                <Link href={`/tatuadores/${params.slug}/reservar`}>Reservar con {artist.name}</Link>
+                <Link href={`/tatuadores/${slug}/reservar`}>
+                  Reservar con {artist.display_name}
+                </Link>
               </Button>
             </div>
           </div>
@@ -186,32 +210,43 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
               options={{ duration: 1.4 }}
               className="border-border relative aspect-[4/5] overflow-hidden border"
             >
-              <ImagePlaceholder
-                seed={`artist-hero-${params.slug}`}
-                ratio="4/5"
-                alt={`Retrato editorial de ${artist.name}`}
-              />
+              {artist.avatar_path ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={artist.avatar_path}
+                  alt={`Retrato de ${artist.display_name}`}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <ImagePlaceholder
+                  seed={`artist-hero-${slug}`}
+                  ratio="4/5"
+                  alt={`Retrato editorial de ${artist.display_name}`}
+                />
+              )}
             </MaskReveal>
           </div>
         </div>
       </header>
 
-      <section aria-labelledby="bio" className="border-border border-b py-20">
-        <div className="container grid gap-12 md:grid-cols-[1fr_2fr]">
-          <div>
-            <p className="text-gold text-xs uppercase tracking-[0.2em]">Bio</p>
-            <h2 id="bio" className="font-display mt-3 text-4xl">
-              Una conversación larga.
-            </h2>
+      {artist.long_bio && (
+        <section aria-labelledby="bio" className="border-border border-b py-20">
+          <div className="container grid gap-12 md:grid-cols-[1fr_2fr]">
+            <div>
+              <p className="text-gold text-xs uppercase tracking-[0.2em]">Bio</p>
+              <h2 id="bio" className="font-display mt-3 text-4xl">
+                Una conversación larga.
+              </h2>
+            </div>
+            <TextReveal
+              as="p"
+              text={artist.long_bio}
+              options={{ stagger: 0.015, y: 12 }}
+              className="font-display text-ink-100 text-2xl leading-relaxed"
+            />
           </div>
-          <TextReveal
-            as="p"
-            text={artist.longBio}
-            options={{ stagger: 0.015, y: 12 }}
-            className="font-display text-ink-100 text-2xl leading-relaxed"
-          />
-        </div>
-      </section>
+        </section>
+      )}
 
       <section aria-labelledby="portafolio" className="border-border border-b py-20">
         <div className="container">
@@ -223,21 +258,28 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
               </h2>
             </div>
             <Badge variant="muted" className="hidden md:inline-flex">
-              {artist.portfolio.length} piezas
+              {portfolio.length} piezas
             </Badge>
           </div>
-          <Carousel className="w-full">
-            {artist.portfolio.map((seed, i) => (
-              <CarouselItem key={seed} className="basis-full md:basis-1/2">
-                <PortfolioItem
-                  seed={`work-${seed}`}
-                  title={`Trabajo ${i + 1}`}
-                  styles={artist.styles}
-                  alt={`Trabajo ${i + 1} de ${artist.name}`}
-                />
-              </CarouselItem>
-            ))}
-          </Carousel>
+          {portfolio.length === 0 ? (
+            <p className="text-muted-foreground text-sm">
+              Aún no hay piezas publicadas en el portafolio.
+            </p>
+          ) : (
+            <Carousel className="w-full">
+              {portfolio.map((item, i) => (
+                <CarouselItem key={item.id} className="basis-full md:basis-1/2">
+                  <PortfolioItem
+                    seed={item.seed ?? `work-${item.id}`}
+                    title={item.alt_text ?? `Trabajo ${i + 1}`}
+                    styles={item.style_tags ?? specialties}
+                    alt={item.alt_text ?? `Trabajo ${i + 1} de ${artist.display_name}`}
+                    storagePath={item.storage_path}
+                  />
+                </CarouselItem>
+              ))}
+            </Carousel>
+          )}
         </div>
       </section>
 
@@ -246,30 +288,33 @@ export default function ArtistDetailPage({ params }: ArtistPageProps) {
           <div className="mb-10">
             <p className="text-gold text-xs uppercase tracking-[0.2em]">Servicios</p>
             <h2 id="servicios" className="font-display mt-3 text-4xl">
-              Cómo se trabaja con {artist.name}.
+              Cómo se trabaja con {artist.display_name}.
             </h2>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            {artist.services.map((service) => (
-              <div
-                key={service.name}
-                className="border-border bg-ink-900 hover:border-gold/50 flex flex-col gap-4 border p-6 transition-colors"
-              >
-                <h3 className="font-display text-2xl">{service.name}</h3>
-                <p className="text-ink-300 text-sm">{service.duration}</p>
-                <p className="font-display text-gold text-3xl">{service.price}</p>
-              </div>
-            ))}
+            <ServiceCard name="Consulta + diseño" duration="30-60 min" price="Gratis" />
+            <ServiceCard name="Sesión estándar" duration="2-4 horas" price="Cotización" />
+            <ServiceCard name="Proyecto largo" duration="Múltiples sesiones" price="Cotización" />
           </div>
           <div className="mt-10">
             <Button asChild size="lg">
-              <Link href={`/tatuadores/${params.slug}/reservar`}>
-                Iniciar reserva con {artist.name}
+              <Link href={`/tatuadores/${slug}/reservar`}>
+                Iniciar reserva con {artist.display_name}
               </Link>
             </Button>
           </div>
         </div>
       </section>
     </article>
+  );
+}
+
+function ServiceCard({ name, duration, price }: { name: string; duration: string; price: string }) {
+  return (
+    <div className="border-border bg-ink-900 hover:border-gold/50 flex flex-col gap-4 border p-6 transition-colors">
+      <h3 className="font-display text-2xl">{name}</h3>
+      <p className="text-ink-300 text-sm">{duration}</p>
+      <p className="font-display text-gold text-3xl">{price}</p>
+    </div>
   );
 }

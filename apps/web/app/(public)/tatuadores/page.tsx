@@ -1,55 +1,77 @@
-import Link from 'next/link';
 import { Instagram, Twitter, Youtube, Globe } from 'lucide-react';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { ArtistGrid } from '@/components/artists/artist-grid';
 import { TextReveal } from '@/components/animations/text-reveal';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
-const ARTISTS = [
-  {
-    slug: 'inka',
-    name: 'Inka',
-    headline: 'Geometría con intención.',
-    styles: ['Blackwork', 'Dotwork'],
-    bio: 'Siete años tatuando líneas que sobreviven al tiempo. Piezas geométricas y mandalas contemporáneos.',
-    location: 'CDMX',
-    experience: 7,
-    socials: { instagram: '#', twitter: '#', youtube: '#', website: '#' },
-    featured: true,
-  },
-  {
-    slug: 'mara',
-    name: 'Mara',
-    headline: 'Acuarela que respira.',
-    styles: ['Color', 'Fine-line'],
-    bio: 'Especialista en piezas pequeñas con línea fina y composiciones botánicas en acuarela.',
-    location: 'CDMX',
-    experience: 5,
-    socials: { instagram: '#', twitter: '#' },
-    featured: false,
-  },
-  {
-    slug: 'yael',
-    name: 'Yael',
-    headline: 'Retratos sobre piel.',
-    styles: ['Realismo', 'Microrealismo'],
-    bio: 'Retratos familiares y piezas que buscan capturar un instante, no una pose.',
-    location: 'CDMX',
-    experience: 9,
-    socials: { instagram: '#', youtube: '#' },
-    featured: false,
-  },
-];
+type SocialNetwork = 'instagram' | 'twitter' | 'youtube' | 'website';
 
-const SOCIAL_ICONS = {
+const SOCIAL_ICONS: Record<SocialNetwork, typeof Instagram> = {
   instagram: Instagram,
   twitter: Twitter,
   youtube: Youtube,
   website: Globe,
 };
 
-export default function ArtistsPage() {
+const SOCIAL_LABELS: Record<SocialNetwork, string> = {
+  instagram: 'Instagram',
+  twitter: 'X',
+  youtube: 'YouTube',
+  website: 'Sitio web',
+};
+
+type SocialLink = { network: SocialNetwork; url: string };
+
+type ArtistRow = {
+  id: string;
+  slug: string;
+  display_name: string;
+  headline: string | null;
+  specialties: string[] | null;
+  city: string | null;
+  years_active: number | null;
+  avatar_path: string | null;
+  featured: boolean;
+  instagram: string | null;
+  twitter: string | null;
+  youtube: string | null;
+  website: string | null;
+};
+
+function buildSocials(a: ArtistRow): SocialLink[] {
+  const out: SocialLink[] = [];
+  if (a.instagram) out.push({ network: 'instagram', url: `https://instagram.com/${a.instagram}` });
+  if (a.twitter) out.push({ network: 'twitter', url: `https://twitter.com/${a.twitter}` });
+  if (a.youtube)
+    out.push({
+      network: 'youtube',
+      url: a.youtube.startsWith('@')
+        ? `https://youtube.com/${a.youtube}`
+        : `https://youtube.com/@${a.youtube}`,
+    });
+  if (a.website) out.push({ network: 'website', url: a.website });
+  return out;
+}
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export default async function ArtistsPage() {
+  const supabase = await createSupabaseServerClient();
+  const { data: rows } = await supabase
+    .from('tattoo_artists')
+    .select(
+      'id, slug, display_name, headline, specialties, city, years_active, avatar_path, featured, instagram, twitter, youtube, website',
+    )
+    .eq('is_active', true)
+    .order('featured', { ascending: false })
+    .order('display_name', { ascending: true });
+
+  const artists = (rows ?? []) as ArtistRow[];
+
   return (
     <div className="container py-20 md:py-28">
       <header className="mx-auto mb-16 max-w-3xl text-center">
@@ -62,56 +84,92 @@ export default function ArtistsPage() {
         />
       </header>
 
-      <ArtistGrid className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-        {ARTISTS.map((artist) => (
-          <Link key={artist.slug} href={`/tatuadores/${artist.slug}`} className="group block">
-            <div className="border-border relative aspect-[3/4] overflow-hidden border">
-              <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105">
-                <ImagePlaceholder
-                  seed={`artist-portrait-${artist.slug}`}
-                  ratio="3/4"
-                  alt={`Retrato de ${artist.name}`}
-                />
-              </div>
-              {artist.featured && (
-                <Badge variant="default" className="absolute left-4 top-4">
-                  Destacado
-                </Badge>
-              )}
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/40 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-6">
-                <p className="text-gold text-xs uppercase tracking-[0.2em] transition-transform duration-500 group-hover:-translate-y-1">
-                  {artist.styles.join(' · ')}
-                </p>
-                <h2 className="font-display text-foreground group-hover:text-gold mt-2 text-4xl transition-colors duration-500">
-                  {artist.name}
-                </h2>
-              </div>
-            </div>
-            <div className="mt-5 flex items-center justify-between">
-              <p className="text-ink-300 text-sm">
-                {artist.location} · {artist.experience} años
-              </p>
-              <div className="text-ink-400 flex gap-2">
-                {Object.keys(artist.socials).map((network) => {
-                  const Icon = SOCIAL_ICONS[network as keyof typeof SOCIAL_ICONS];
-                  return Icon ? (
-                    <span
-                      key={network}
-                      className="border-border hover:text-gold rounded-sm border p-1.5 transition-transform hover:rotate-12"
-                    >
-                      <Icon className="h-3.5 w-3.5" />
-                    </span>
-                  ) : null;
-                })}
-              </div>
-            </div>
-            <p className="font-display text-foreground mt-4 text-2xl leading-tight">
-              {artist.headline}
-            </p>
-          </Link>
-        ))}
-      </ArtistGrid>
+      {artists.length === 0 ? (
+        <EmptyState
+          title="Aún no hay tatuadores publicados"
+          description="Pronto you'll see artists here."
+        />
+      ) : (
+        <ArtistGrid className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
+          {artists.map((artist) => {
+            const socials = buildSocials(artist);
+            return (
+              <article key={artist.id} className="group block">
+                <Link
+                  href={`/tatuadores/${artist.slug}`}
+                  className="block focus-visible:outline-none"
+                  aria-label={`Ver perfil de ${artist.display_name}`}
+                >
+                  <div className="border-border relative aspect-[3/4] overflow-hidden border">
+                    {artist.avatar_path ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={artist.avatar_path}
+                        alt={`Retrato de ${artist.display_name}`}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-focus-within:scale-105 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 transition-transform duration-700 ease-out group-focus-within:scale-105 group-hover:scale-105">
+                        <ImagePlaceholder
+                          seed={`artist-portrait-${artist.slug}`}
+                          ratio="3/4"
+                          alt={`Retrato de ${artist.display_name}`}
+                        />
+                      </div>
+                    )}
+                    {artist.featured && (
+                      <Badge variant="default" className="absolute left-4 top-4">
+                        Destacado
+                      </Badge>
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 p-6">
+                      <p className="text-gold text-xs uppercase tracking-[0.2em] transition-transform duration-500 group-focus-within:-translate-y-1 group-hover:-translate-y-1">
+                        {(artist.specialties ?? []).join(' · ') || 'Tatuador'}
+                      </p>
+                      <h2 className="font-display text-foreground group-hover:text-gold group-focus-within:text-gold mt-2 text-4xl transition-colors duration-500">
+                        {artist.display_name}
+                      </h2>
+                    </div>
+                  </div>
+                </Link>
+                <div className="mt-5 flex items-center justify-between">
+                  <p className="text-ink-300 text-sm">
+                    {artist.city ?? '—'}
+                    {artist.years_active !== null ? ` · ${artist.years_active} años` : ''}
+                  </p>
+                  <ul
+                    className="text-ink-400 flex gap-2"
+                    aria-label={`Redes de ${artist.display_name}`}
+                  >
+                    {socials.map((social) => {
+                      const Icon = SOCIAL_ICONS[social.network];
+                      return (
+                        <li key={social.network}>
+                          <a
+                            href={social.url}
+                            rel="noreferrer"
+                            target="_blank"
+                            aria-label={`${SOCIAL_LABELS[social.network]} de ${artist.display_name}`}
+                            className="border-border hover:text-gold focus-visible:ring-ring inline-flex rounded-sm border p-1.5 transition-transform hover:rotate-12 focus-visible:outline-none focus-visible:ring-2"
+                          >
+                            <Icon className="h-3.5 w-3.5" />
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+                {artist.headline && (
+                  <p className="text-foreground font-display mt-4 text-2xl leading-tight">
+                    {artist.headline}
+                  </p>
+                )}
+              </article>
+            );
+          })}
+        </ArtistGrid>
+      )}
 
       <div className="mt-20">
         <EmptyState
