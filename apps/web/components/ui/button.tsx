@@ -34,22 +34,24 @@ export interface ButtonProps
   shine?: boolean;
 }
 
+/**
+ * Button principal. El shine se aplica mediante pseudo-elemento
+ * (after:) para no romper la composición de Radix `Slot` cuando
+ * `asChild` está activo. Por defecto shine solo aparece en la
+ * variante primary y respeta prefers-reduced-motion.
+ */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, shine = true, children, ...props }, ref) => {
+  ({ className, variant = 'default', size, asChild = false, shine, children, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
+    const shouldShine = shine ?? variant === 'default';
     return (
-      <Comp ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props}>
-        {shine ? (
-          <>
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-x-1 inset-y-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 transition-[transform,opacity] duration-500 group-hover/btn:translate-x-[150%] group-hover/btn:opacity-100"
-            />
-            {children}
-          </>
-        ) : (
-          children
-        )}
+      <Comp
+        ref={ref}
+        data-shine={shouldShine ? 'true' : undefined}
+        className={cn(buttonVariants({ variant, size }), className)}
+        {...props}
+      >
+        {children}
       </Comp>
     );
   },

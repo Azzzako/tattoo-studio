@@ -15,7 +15,10 @@ export interface CountUpProps extends Omit<React.HTMLAttributes<HTMLSpanElement>
 }
 
 /**
- * Contador numérico que anima de 0 al valor objetivo al entrar en viewport.
+ * Contador numérico que anima de 0 al valor objetivo al entrar
+ * en viewport. El valor final se preserva semánticamente en
+ * `aria-label` y `data-final` para usuarios sin JS / con reduced
+ * motion, y como referencia para tests.
  */
 export function CountUp({
   to,
@@ -29,7 +32,7 @@ export function CountUp({
   ...props
 }: CountUpProps) {
   const ref = React.useRef<HTMLSpanElement>(null);
-  const text = useCountUp(ref, {
+  const { current, final } = useCountUp(ref, {
     to,
     ...(duration !== undefined ? { duration } : {}),
     ...(delay !== undefined ? { delay } : {}),
@@ -39,8 +42,14 @@ export function CountUp({
     decimals,
   });
   return (
-    <span ref={ref} className={cn(className)} {...props}>
-      {text}
+    <span
+      ref={ref}
+      className={cn('tabular-nums', className)}
+      aria-label={final}
+      data-final={final}
+      {...props}
+    >
+      {current}
     </span>
   );
 }

@@ -11,8 +11,10 @@ export interface ParallaxProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * Parallax con ScrollTrigger. El contenedor padre define el rango,
- * el hijo interior se mueve dentro de ese rango.
+ * Parallax con scrub. Aplica la transformación únicamente al
+ * elemento hijo directo; los overlays que se posicionen con
+ * `absolute` deben quedar fuera de este hijo para no moverse
+ * con el scroll.
  */
 export function Parallax({ speed, axis, options, className, children, ...props }: ParallaxProps) {
   const innerRef = React.useRef<HTMLDivElement>(null);
@@ -22,8 +24,8 @@ export function Parallax({ speed, axis, options, className, children, ...props }
     ...options,
   });
   return (
-    <div className={cn('relative', className)} {...props}>
-      <div ref={innerRef} className="will-change-transform">
+    <div className={cn('relative overflow-hidden', className)} {...props}>
+      <div ref={innerRef} className="h-full w-full will-change-transform">
         {children}
       </div>
     </div>

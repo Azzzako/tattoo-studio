@@ -115,23 +115,25 @@ export default function HomePage() {
               </div>
             </dl>
           </div>
-          <Parallax speed={0.12} className="relative">
-            <MaskReveal
-              options={{ duration: 1.4, delay: 0.2 }}
-              className="border-border relative aspect-[4/5] overflow-hidden border"
-            >
-              <ImagePlaceholder
-                seed="insigne-hero"
-                ratio="4/5"
-                alt="Tatuaje blackwork en antebrazo"
-              />
-              <div className="absolute inset-x-0 bottom-0 p-6">
-                <p className="font-display text-foreground text-2xl leading-tight">
-                  Geometría braquial
-                </p>
-                <p className="text-ink-300 mt-1 text-xs uppercase tracking-[0.18em]">Inka · 6h</p>
-              </div>
-            </MaskReveal>
+          <div className="relative">
+            <Parallax speed={0.12} className="relative aspect-[4/5]">
+              <MaskReveal
+                options={{ duration: 1.4, delay: 0.2 }}
+                className="border-border relative h-full w-full overflow-hidden border"
+              >
+                <ImagePlaceholder
+                  seed="insigne-hero"
+                  ratio="4/5"
+                  alt="Tatuaje blackwork en antebrazo"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-6">
+                  <p className="font-display text-foreground text-2xl leading-tight">
+                    Geometría braquial
+                  </p>
+                  <p className="text-ink-300 mt-1 text-xs uppercase tracking-[0.18em]">Inka · 6h</p>
+                </div>
+              </MaskReveal>
+            </Parallax>
             <div className="border-gold/40 bg-background glow-gold absolute -bottom-6 -left-6 hidden border p-4 md:block">
               <div className="text-gold flex items-center gap-2 text-xs uppercase tracking-[0.18em]">
                 <Star className="fill-gold text-gold h-3.5 w-3.5" />
@@ -141,7 +143,7 @@ export default function HomePage() {
                 «La atención al detalle es de otro nivel. Salí con algo que nunca olvidaré.»
               </p>
             </div>
-          </Parallax>
+          </div>
         </div>
         <div className="border-border bg-ink-950 border-t">
           <Marquee speed={50}>
@@ -165,6 +167,7 @@ export default function HomePage() {
               <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Tatuadores</p>
               <TextReveal
                 as="h2"
+                id="tatuadores"
                 text="Las manos detrás de la tinta."
                 options={{ stagger: 0.04 }}
                 className="font-display text-5xl md:text-6xl"
@@ -217,6 +220,7 @@ export default function HomePage() {
             <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Portafolio</p>
             <TextReveal
               as="h2"
+              id="portafolio"
               text="Trabajos recientes."
               options={{ stagger: 0.04 }}
               className="font-display text-5xl md:text-6xl"
@@ -254,6 +258,7 @@ export default function HomePage() {
               <p className="text-gold mb-2 text-xs uppercase tracking-[0.2em]">Eventos</p>
               <TextReveal
                 as="h2"
+                id="eventos"
                 text="Convenciones y guest spots."
                 options={{ stagger: 0.04 }}
                 className="font-display text-5xl md:text-6xl"
@@ -275,7 +280,7 @@ export default function HomePage() {
               <Link
                 key={event.slug}
                 href={`/eventos/${event.slug}`}
-                className="border-border bg-ink-900 hover:border-gold/50 group relative flex flex-col justify-between gap-8 border p-8 transition-colors duration-500 hover:-translate-y-1"
+                className="border-border bg-ink-900 hover:border-gold/50 group relative flex flex-col justify-between gap-8 border p-8 transition-[color,background-color,border-color,transform] duration-500 hover:-translate-y-1"
               >
                 <div>
                   <p className="text-gold text-xs uppercase tracking-[0.2em]">{event.date}</p>

@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -14,31 +16,6 @@ function ensurePlugins(): void {
 function prefersReducedMotion(): boolean {
   if (typeof window === 'undefined') return true;
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-function parseWords(text: string): string[] {
-  return text.split(/(\s+)/).filter((part) => part.length > 0);
-}
-
-function createWordSpans(text: string, container: HTMLElement): HTMLSpanElement[] {
-  const words = parseWords(text);
-  const fragment = document.createDocumentFragment();
-  const spans: HTMLSpanElement[] = [];
-  for (const word of words) {
-    if (/^\s+$/.test(word)) {
-      fragment.appendChild(document.createTextNode(word));
-    } else {
-      const span = document.createElement('span');
-      span.style.display = 'inline-block';
-      span.style.willChange = 'transform, opacity';
-      span.textContent = word;
-      fragment.appendChild(span);
-      spans.push(span);
-    }
-  }
-  container.textContent = '';
-  container.appendChild(fragment);
-  return spans;
 }
 
 export interface FadeUpOptions {
@@ -81,7 +58,9 @@ export interface StaggerOptions {
 }
 
 /**
- * Anima hijos directos (o selector) con stagger fade-up. Trigger ScrollTrigger.
+ * Anima hijos directos (o selector) con stagger fade-up al entrar
+ * en viewport. Usa gsap.fromTo con scrollTrigger para ser robusto
+ * ante scroll restaurado y refreshes.
  */
 export function useStaggerChildren(
   ref: React.RefObject<HTMLElement | null>,
@@ -101,30 +80,35 @@ export function useStaggerChildren(
     if (targets.length === 0) return;
 
     if (prefersReducedMotion()) {
-      gsap.set(targets, { opacity: 1, y: 0 });
+      gsap.set(targets, { opacity: 1, y: 0, clearProps: 'opacity,transform' });
       return;
     }
 
-    const trigger = ScrollTrigger.create({
-      trigger: el,
-      start,
-      once: true,
-      onEnter: () => {
-        gsap.fromTo(
-          targets,
-          { opacity: 0, y: distance },
-          { opacity: 1, y: 0, duration, stagger, ease: 'power3.out' },
-        );
+    const tween = gsap.fromTo(
+      targets,
+      { opacity: 0, y: distance },
+      {
+        opacity: 1,
+        y: 0,
+        duration,
+        stagger,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start,
+          once: true,
+        },
       },
-    });
+    );
     return () => {
-      trigger.kill();
-      gsap.killTweensOf(targets);
+      tween.scrollTrigger?.kill();
+      tween.kill();
+      gsap.set(targets, { clearProps: 'opacity,transform,willChange' });
     };
   }, [ref, selector, stagger, distance, duration, start]);
 }
 
-export interface TextRevealOptions {
+export interface WordRevealOptions {
   stagger?: number;
   duration?: number;
   start?: string;
@@ -133,41 +117,43 @@ export interface TextRevealOptions {
 }
 
 /**
- * Divide el texto del nodo en palabras y las anima al entrar en viewport.
- * Resetea el nodo a su contenido original al limpiar.
+ * Anima los hijos (spans/palabras) del contenedor. El componente
+ * es responsable de renderizar los spans declarativamente; este
+ * hook solo dispara la animación. Sin mutación imperativa del DOM.
  */
-export function useTextReveal(
+export function useWordReveal(
   ref: React.RefObject<HTMLElement | null>,
-  { stagger = 0.04, duration = 0.8, start = 'top 85%', y = 32, delay = 0 }: TextRevealOptions = {},
+  { stagger = 0.04, duration = 0.8, start = 'top 85%', y = 32, delay = 0 }: WordRevealOptions = {},
 ) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     ensurePlugins();
-    const original = el.textContent ?? '';
-    const spans = createWordSpans(original, el);
+    const words = Array.from(el.querySelectorAll<HTMLElement>('[data-word]'));
+    if (words.length === 0) return;
 
     if (prefersReducedMotion()) {
-      gsap.set(spans, { opacity: 1, y: 0 });
+      gsap.set(words, { opacity: 1, y: 0, clearProps: 'opacity,transform' });
       return;
     }
 
-    const trigger = ScrollTrigger.create({
-      trigger: el,
-      start,
-      once: true,
-      onEnter: () => {
-        gsap.fromTo(
-          spans,
-          { opacity: 0, y },
-          { opacity: 1, y: 0, duration, stagger, delay, ease: 'power3.out' },
-        );
+    const tween = gsap.fromTo(
+      words,
+      { opacity: 0, y },
+      {
+        opacity: 1,
+        y: 0,
+        duration,
+        stagger,
+        delay,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start, once: true },
       },
-    });
+    );
     return () => {
-      trigger.kill();
-      gsap.killTweensOf(spans);
-      el.textContent = original;
+      tween.scrollTrigger?.kill();
+      tween.kill();
+      gsap.set(words, { clearProps: 'opacity,transform,willChange' });
     };
   }, [ref, stagger, duration, start, y, delay]);
 }
@@ -184,7 +170,8 @@ export interface CountUpOptions {
 
 /**
  * Anima un contador de 0 al valor objetivo cuando entra en viewport.
- * Si reduced motion, muestra el valor final directamente.
+ * Devuelve el valor actual formateado. El valor final debe estar
+ * presente en SSR (semánticamente) vía el atributo `data-final`.
  */
 export function useCountUp(
   ref: React.RefObject<HTMLElement | null>,
@@ -209,32 +196,30 @@ export function useCountUp(
     }
     ensurePlugins();
     const counter = { v: 0 };
-    const trigger = ScrollTrigger.create({
-      trigger: el,
-      start,
-      once: true,
-      onEnter: () => {
-        gsap.to(counter, {
-          v: to,
-          duration,
-          delay,
-          ease: 'power2.out',
-          onUpdate: () => {
-            setValue(parseFloat(counter.v.toFixed(decimals)));
-          },
-          onComplete: () => {
-            setValue(to);
-          },
-        });
+    const tween = gsap.to(counter, {
+      v: to,
+      duration,
+      delay,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: el, start, once: true },
+      onUpdate: () => {
+        setValue(parseFloat(counter.v.toFixed(decimals)));
+      },
+      onComplete: () => {
+        setValue(to);
       },
     });
     return () => {
-      trigger.kill();
+      tween.scrollTrigger?.kill();
+      tween.kill();
       gsap.killTweensOf(counter);
     };
   }, [ref, to, duration, start, delay, decimals]);
 
-  return `${prefix}${value.toFixed(decimals)}${suffix}`;
+  return {
+    current: `${prefix}${value.toFixed(decimals)}${suffix}`,
+    final: `${prefix}${to.toFixed(decimals)}${suffix}`,
+  };
 }
 
 export interface ParallaxOptions {
@@ -243,7 +228,8 @@ export interface ParallaxOptions {
 }
 
 /**
- * Parallax simple basado en scroll. Speed positivo = más rápido, negativo = más lento.
+ * Parallax con scrub. El elemento con ref se mueve dentro del
+ * rango visible del padre.
  */
 export function useParallax(
   ref: React.RefObject<HTMLElement | null>,
@@ -283,7 +269,7 @@ export interface MaskRevealOptions {
 }
 
 /**
- * Reveal con clip-path. El contenedor se recorta desde un lado.
+ * Reveal con clip-path. Se aplica vía scrollTrigger.fromTo.
  */
 export function useMaskReveal(
   ref: React.RefObject<HTMLElement | null>,
@@ -293,38 +279,24 @@ export function useMaskReveal(
     const el = ref.current;
     if (!el) return;
     if (prefersReducedMotion()) {
-      gsap.set(el, { clipPath: 'inset(0 0% 0 0%)' });
+      el.style.clipPath = 'inset(0 0% 0 0%)';
       return;
     }
     ensurePlugins();
     const from = axis === 'x' ? 'inset(0 100% 0 0)' : 'inset(100% 0 0 0)';
     const to = 'inset(0 0% 0 0)';
-    gsap.set(el, { clipPath: from });
-    const trigger = ScrollTrigger.create({
-      trigger: el,
-      start,
-      once: true,
-      onEnter: () => {
-        gsap.to(el, { clipPath: to, duration, delay, ease: 'power3.out' });
-      },
+    el.style.clipPath = from;
+    const tween = gsap.to(el, {
+      clipPath: to,
+      duration,
+      delay,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: el, start, once: true },
     });
     return () => {
-      trigger.kill();
-      gsap.killTweensOf(el);
+      tween.scrollTrigger?.kill();
+      tween.kill();
+      el.style.clipPath = to;
     };
   }, [ref, start, duration, delay, axis]);
-}
-
-/**
- * Hook para limpiar todos los ScrollTriggers de un contenedor.
- */
-export function useScrollTriggerCleanup(ref: React.RefObject<HTMLElement | null>) {
-  useEffect(() => {
-    return () => {
-      if (!ref.current) return;
-      ScrollTrigger.getAll()
-        .filter((t) => ref.current?.contains(t.trigger as Node | null))
-        .forEach((t) => t.kill());
-    };
-  }, [ref]);
 }

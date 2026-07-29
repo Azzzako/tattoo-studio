@@ -156,6 +156,31 @@
     -webkit-text-stroke: 1px hsl(var(--gold));
     color: transparent;
   }
+
+  /* Shine effect aplicado via pseudo-elemento para no romper la
+     composición de Radix Slot cuando Button usa asChild. Se activa
+     con [data-shine='true'] sobre el botón y se anima con :hover. */
+  [data-shine='true']::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -125%;
+    width: 60%;
+    pointer-events: none;
+    background: linear-gradient(100deg, transparent 0%, hsl(0 0% 100% / 0.3) 50%, transparent 100%);
+    transform: skewX(-12deg);
+    transition:
+      transform 600ms ease,
+      opacity 600ms ease;
+    opacity: 0;
+  }
+
+  [data-shine='true']:hover::after,
+  [data-shine='true']:focus-visible::after {
+    transform: translateX(220%) skewX(-12deg);
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

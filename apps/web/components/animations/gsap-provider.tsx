@@ -6,8 +6,11 @@ import { useEffect } from 'react';
 
 /**
  * Provider que registra plugins de GSAP, refresca ScrollTrigger
- * tras eventos que afectan el layout (resize, fonts loaded) y
- * configura defaults para alinear con la identidad.
+ * tras eventos que afectan el layout y configura defaults.
+ *
+ * NO mata triggers globales en cleanup: cada hook/lib de animación
+ * es dueño de los suyos. Esto evita carreras con Fast Refresh y
+ * montajes condicionales.
  */
 export function GsapProvider() {
   useEffect(() => {
@@ -31,7 +34,6 @@ export function GsapProvider() {
       window.removeEventListener('load', triggerRefresh);
       window.removeEventListener('resize', onResize);
       if (resizeTimer) clearTimeout(resizeTimer);
-      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
 

@@ -7,7 +7,7 @@ import { ImagePlaceholder } from '@/components/ui/image-placeholder';
 import { TextReveal } from '@/components/animations/text-reveal';
 
 interface EventPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 const EVENTS: Record<
@@ -54,8 +54,9 @@ export function generateStaticParams() {
   return Object.keys(EVENTS).map((slug) => ({ slug }));
 }
 
-export default function EventDetailPage({ params }: EventPageProps) {
-  const event = EVENTS[params.slug];
+export default async function EventDetailPage({ params }: EventPageProps) {
+  const { slug } = await params;
+  const event = EVENTS[slug];
   if (!event) notFound();
 
   return (
@@ -95,7 +96,7 @@ export default function EventDetailPage({ params }: EventPageProps) {
           </div>
           <div className="relative">
             <div className="border-border relative aspect-[4/5] overflow-hidden border">
-              <ImagePlaceholder seed={`event-hero-${params.slug}`} ratio="4/5" alt={event.title} />
+              <ImagePlaceholder seed={`event-hero-${slug}`} ratio="4/5" alt={event.title} />
             </div>
           </div>
         </div>
@@ -142,7 +143,7 @@ export default function EventDetailPage({ params }: EventPageProps) {
           </div>
           <div className="border-border bg-ink-900 relative aspect-[4/3] overflow-hidden border">
             <ImagePlaceholder
-              seed={`event-map-${params.slug}`}
+              seed={`event-map-${slug}`}
               ratio="4/3"
               alt="Mapa del evento"
               overlay="none"

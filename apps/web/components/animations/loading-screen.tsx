@@ -4,26 +4,55 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 
 /**
- * Pantalla de carga de una sola línea. Se monta tras hidratación,
- * reproduce una línea dorada bajo la palabra y se desvanece.
- * Respeta prefers-reduced-motion.
+ * Pantalla de carga inicial. Se renderiza en SSR como visible
+ * para evitar flash post-hidratación, se desvanece tras
+ * `document.readyState === 'complete'` o tras un tiempo máximo,
+ * y se desmonta al terminar la transición.
+ *
+ * Respeta `prefers-reduced-motion` y bloquea interacción mientras
+ * es visible para evitar clics accidentales.
  */
 export function LoadingScreen() {
   const [hidden, setHidden] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [unmounted, setUnmounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const t = setTimeout(() => setHidden(true), reduced ? 0 : 900);
-    return () => clearTimeout(t);
+    const totalMs = reduced ? 200 : 1200;
+    const start = performance.now();
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const finish = () => {
+      setHidden(true);
+      timer = setTimeout(() => setUnmounted(true), 500);
+    };
+    if (document.readyState === 'complete') {
+      const remaining = Math.max(0, totalMs - (performance.now() - start));
+      timer = setTimeout(finish, remaining);
+    } else {
+      const onLoad = () => {
+        const remaining = Math.max(0, totalMs - (performance.now() - start));
+        timer = setTimeout(finish, remaining);
+      };
+      window.addEventListener('load', onLoad, { once: true });
+      timer = setTimeout(finish, totalMs);
+      return () => {
+        window.removeEventListener('load', onLoad);
+        if (timer) clearTimeout(timer);
+      };
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
-  if (!mounted) return null;
+  if (unmounted) return null;
 
   return (
     <div
-      aria-hidden={hidden}
+      role="status"
+      aria-live="polite"
+      aria-busy={!hidden}
+      aria-hidden="true"
       className={cn(
         'bg-background pointer-events-none fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500',
         hidden && 'opacity-0',
