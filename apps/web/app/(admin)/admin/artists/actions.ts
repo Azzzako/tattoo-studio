@@ -507,10 +507,12 @@ export async function createArtistAsAdmin(
   }
   const userId = created.user.id;
 
-  // 2. Insert profile.
+  // 2. Upsert profile. The trigger on_auth_user_created (migration 0003)
+  //    inserts a 'customer' profile row when auth.users is created. We
+  //    need to promote it to 'artist' here, so we use upsert keyed on id.
   const { error: profileErr } = await admin
     .from('profiles')
-    .insert({ id: userId, role: 'artist', studio_id: studioId });
+    .upsert({ id: userId, role: 'artist', studio_id: studioId }, { onConflict: 'id' });
   if (profileErr) {
     // Rollback: delete auth user.
     await admin.auth.admin.deleteUser(userId);
