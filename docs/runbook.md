@@ -8,28 +8,13 @@ Procedimientos operativos durante beta.
 2. CI debe pasar (format, lint, typecheck, test, build).
 3. Merge a `staging` para pruebas internas.
 4. Una vez validado, abrir PR a `main`.
-5. Merge dispara `.github/workflows/deploy.yml` que ejecuta `opennextjs-cloudflare deploy`.
+5. Merge a `main` dispara auto-deploy en Vercel (configurado por la integración del repo).
 
 ## Secretes requeridos
 
-Configurar antes del primer deploy:
+Configurar antes del primer deploy en **Vercel → Project → Settings → Environment Variables**. Variables planas (no sensibles) van en el mismo lugar. Para variables sensibles a nivel de entorno (preview / production) usar Environment Variables por ambiente.
 
-```bash
-wrangler secret put SUPABASE_URL
-wrangler secret put SUPABASE_ANON_KEY
-wrangler secret put SUPABASE_SERVICE_ROLE_KEY
-wrangler secret put TOKEN_ENCRYPTION_KEY
-wrangler secret put GOOGLE_OAUTH_CLIENT_ID
-wrangler secret put GOOGLE_OAUTH_CLIENT_SECRET
-wrangler secret put GOOGLE_OAUTH_REDIRECT_URI
-wrangler secret put WHATSAPP_PHONE_ID
-wrangler secret put WHATSAPP_ACCESS_TOKEN
-wrangler secret put RESEND_API_KEY
-wrangler secret put RESEND_FROM_EMAIL
-wrangler secret put CRON_SECRET
-```
-
-`TOKEN_ENCRYPTION_KEY` debe tener al menos 32 caracteres.
+`TOKEN_ENCRYPTION_KEY` debe tener al menos 32 caracteres (generar con `openssl rand -hex 32`).
 
 ## Google Calendar
 

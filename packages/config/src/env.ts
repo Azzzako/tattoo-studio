@@ -19,8 +19,6 @@ const schema = z.object({
   WHATSAPP_PHONE_ID: z.string().min(1).optional(),
   WHATSAPP_ACCESS_TOKEN: z.string().min(1).optional(),
   WHATSAPP_BUSINESS_ACCOUNT_ID: z.string().min(1).optional(),
-  CLOUDFLARE_ACCOUNT_ID: z.string().min(1).optional(),
-  CLOUDFLARE_API_TOKEN: z.string().min(1).optional(),
 });
 
 export type Env = z.infer<typeof schema>;

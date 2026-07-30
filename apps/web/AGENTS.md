@@ -74,7 +74,7 @@ Build verde no implica runtime sano. Probar localmente con `bun run preview` (Op
 
 ## 9. Seguridad
 
-- Secrets nunca en el repositorio. Usar Cloudflare Workers secrets o GitHub Actions secrets.
+- Secrets nunca en el repositorio. Usar Vercel Environment Variables o GitHub Actions secrets.
 - Cifrar tokens de Google con `TOKEN_ENCRYPTION_KEY` (AES-GCM en `packages/domain/src/google/sync.ts`).
 - Validar inputs con Zod en Server Actions y Route Handlers.
 - No exponer `SUPABASE_SERVICE_ROLE_KEY` al cliente.
@@ -90,9 +90,8 @@ Build verde no implica runtime sano. Probar localmente con `bun run preview` (Op
 
 ## 11. Despliegue
 
-- Next.js corre en Cloudflare Workers vía `@opennextjs/cloudflare`.
-- Variables planas en `wrangler.jsonc` (sin secretos).
-- Secretos en `wrangler secret put` o en GitHub Actions.
+- Next.js corre en Vercel (Node runtime) con auto-deploy desde `main`.
+- Variables planas y secretos en Vercel → Project → Settings → Environment Variables.
 - Cron jobs declarados en `apps/web/app/api/cron/*` protegidos por `CRON_SECRET`.
 
 ## 12. Recursos reutilizados de aaora-solutions
