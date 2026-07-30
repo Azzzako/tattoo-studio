@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'node:crypto';
 import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
@@ -26,6 +27,11 @@ function escapeHtml(s: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
 }
 
 function htmlPage(args: {
@@ -78,8 +84,26 @@ function slugify(input: string): string {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'dev-only endpoint' }, { status: 404 });
+  // Token-gated: only callers with the matching `DEV_ADMIN_TOKEN` env var
+  // can mint magic links. This is the production escape hatch that lets the
+  // studio admin log in without going through Supabase's email roundtrip
+  // (and its rate limit). Rotate the env var in Vercel + redeploy if it
+  // leaks.
+  const expected = process.env.DEV_ADMIN_TOKEN ?? '';
+  const authHeader = request.headers.get('authorization');
+  const bearerMatch = authHeader ? /^Bearer\s+(.+)$/i.exec(authHeader) : null;
+  const provided = bearerMatch?.[1] ?? '';
+  if (!expected) {
+    return NextResponse.json(
+      { error: 'unconfigured', message: 'DEV_ADMIN_TOKEN env var not set on server.' },
+      { status: 503 },
+    );
+  }
+  if (!provided || !safeEqual(provided, expected)) {
+    return NextResponse.json(
+      { error: 'unauthorized', message: 'Bearer token requerido (env var DEV_ADMIN_TOKEN).' },
+      { status: 401, headers: { 'WWW-Authenticate': 'Bearer realm="dev"' } },
+    );
   }
 
   const url = request.nextUrl;
