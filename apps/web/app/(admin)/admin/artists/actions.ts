@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { createSupabaseServerClient } from '@/lib/supabase/server';
@@ -156,6 +156,7 @@ export async function submitArtistProfileChange(
 
   revalidatePath('/admin/artists');
   revalidatePath('/cuenta/perfil');
+  revalidateTag('tattoo-artists:list');
   return { ok: true, changeId: (inserted as { id: string }).id };
 }
 
@@ -216,6 +217,7 @@ export async function approveProfileChange(formData: FormData): Promise<void> {
 
   revalidatePath('/admin/artists');
   revalidatePath(`/tatuadores`, 'layout');
+  revalidateTag('tattoo-artists:list');
 }
 
 export async function rejectProfileChange(formData: FormData): Promise<void> {
@@ -246,6 +248,7 @@ export async function rejectProfileChange(formData: FormData): Promise<void> {
     .eq('id', changeId);
 
   revalidatePath('/admin/artists');
+  revalidateTag('tattoo-artists:list');
 }
 
 export type AdminArtistResult = { ok: true } | { ok: false; message: string };
@@ -327,6 +330,7 @@ export async function updateArtistAsAdmin(formData: FormData): Promise<AdminArti
 
   revalidatePath('/admin/artists');
   revalidatePath(`/tatuadores`, 'layout');
+  revalidateTag('tattoo-artists:list');
   return { ok: true };
 }
 
@@ -550,6 +554,7 @@ export async function createArtistAsAdmin(
   const linkResult = await generateMagicLink(parsed.data.email);
   if (!linkResult.ok || !linkResult.actionLink) {
     revalidatePath('/admin/artists');
+    revalidateTag('tattoo-artists:list');
     return {
       ok: false,
       message: `Usuario creado pero no se pudo generar magic link: ${linkResult.error}. Reintenta desde la fila del tatuador.`,
@@ -557,5 +562,6 @@ export async function createArtistAsAdmin(
   }
 
   revalidatePath('/admin/artists');
+  revalidateTag('tattoo-artists:list');
   return { ok: true, magicLink: linkResult.actionLink, userId };
 }

@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
@@ -225,6 +226,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       headers: { 'content-type': 'text/html; charset=utf-8' },
     });
   }
+
+  revalidateTag('tattoo-artists:list');
 
   return NextResponse.json({
     email: parsed.data.email,
