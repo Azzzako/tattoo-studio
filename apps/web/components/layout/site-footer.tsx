@@ -104,6 +104,9 @@ export function SiteFooter() {
           <p>© {new Date().getFullYear()} Insigne Tattoo. Todos los derechos reservados.</p>
           <p>{ESTUDIO.schedule}</p>
           <div className="flex gap-4">
+            <Link href="/login" className="hover:text-gold">
+              Acceder
+            </Link>
             <Link href="/privacidad" className="hover:text-gold">
               Privacidad
             </Link>

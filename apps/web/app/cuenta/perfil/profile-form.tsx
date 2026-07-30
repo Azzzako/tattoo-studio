@@ -8,8 +8,12 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { SuccessBanner } from '@/components/feedback/success-banner';
-import { updateMyArtistProfile, type ProfileActionResult } from '@/app/cuenta/perfil/actions';
+import {
+  submitArtistProfileChange,
+  type ArtistChangeActionResult,
+} from '@/app/(admin)/admin/artists/actions';
 
 const schema = z.object({
   display_name: z.string().trim().min(2, 'Mínimo 2 caracteres').max(120),
@@ -77,11 +81,17 @@ const SCHEDULE_KINDS: Array<{ value: string; label: string }> = [
   { value: 'by_request', label: 'Por solicitud' },
 ];
 
-export function ProfileForm({ initial }: { initial: ProfileFormInitial }) {
-  const [state, formAction, pending] = useActionState<ProfileActionResult | undefined, FormData>(
-    updateMyArtistProfile,
-    undefined,
-  );
+interface ProfileFormProps {
+  initial: ProfileFormInitial;
+  hasPendingChange: boolean;
+  pendingProposedAt: string | null;
+}
+
+export function ProfileForm({ initial, hasPendingChange, pendingProposedAt }: ProfileFormProps) {
+  const [state, formAction, pending] = useActionState<
+    ArtistChangeActionResult | undefined,
+    FormData
+  >(submitArtistProfileChange, undefined);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -93,15 +103,37 @@ export function ProfileForm({ initial }: { initial: ProfileFormInitial }) {
 
   if (state?.ok) {
     return (
-      <SuccessBanner
-        title="Perfil actualizado"
-        description="Los cambios se reflejaron en tu perfil público."
-      />
+      <div className="space-y-3">
+        <SuccessBanner
+          title="Cambios enviados al admin"
+          description="El admin del estudio revisa y aprueba tu propuesta. Te avisamos al email de la cuenta."
+        />
+        {hasPendingChange && (
+          <p className="text-muted-foreground text-xs">
+            Ya hay un cambio pendiente desde{' '}
+            {pendingProposedAt ? new Date(pendingProposedAt).toLocaleString('es-MX') : '—'}. El
+            admin recibira esta nueva propuesta encima.
+          </p>
+        )}
+      </div>
     );
   }
 
   return (
     <form action={formAction} className="space-y-6" noValidate>
+      {hasPendingChange && (
+        <div className="border-gold/40 bg-gold/5 rounded-md border p-3">
+          <p className="text-gold flex items-center gap-2 text-xs uppercase tracking-wider">
+            <Badge variant="muted">Cambio pendiente de aprobacion</Badge>
+          </p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            El admin aun no reviso tu ultimo envio (
+            {pendingProposedAt ? new Date(pendingProposedAt).toLocaleString('es-MX') : 'hace poco'}
+            ). Puedes enviar otro que lo reemplaza.
+          </p>
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="display_name">Nombre público</Label>
@@ -131,11 +163,6 @@ export function ProfileForm({ initial }: { initial: ProfileFormInitial }) {
           placeholder="Geometría con intención."
           {...form.register('headline')}
         />
-        {form.formState.errors.headline && (
-          <p role="alert" className="text-destructive text-xs">
-            {form.formState.errors.headline.message}
-          </p>
-        )}
       </div>
 
       <div className="space-y-1.5">
@@ -143,10 +170,9 @@ export function ProfileForm({ initial }: { initial: ProfileFormInitial }) {
         <textarea
           id="bio"
           rows={3}
-          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           {...form.register('bio')}
         />
-        <p className="text-muted-foreground text-xs">Máx. 2000 caracteres.</p>
       </div>
 
       <div className="space-y-1.5">
@@ -154,10 +180,9 @@ export function ProfileForm({ initial }: { initial: ProfileFormInitial }) {
         <textarea
           id="long_bio"
           rows={6}
-          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[140px] w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[140px] w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           {...form.register('long_bio')}
         />
-        <p className="text-muted-foreground text-xs">Máx. 4000 caracteres.</p>
       </div>
 
       <div className="space-y-1.5">
@@ -183,18 +208,13 @@ export function ProfileForm({ initial }: { initial: ProfileFormInitial }) {
             placeholder="7"
             {...form.register('years_active')}
           />
-          {form.formState.errors.years_active && (
-            <p role="alert" className="text-destructive text-xs">
-              {form.formState.errors.years_active.message}
-            </p>
-          )}
         </div>
 
         <div className="space-y-1.5">
           <Label htmlFor="schedule_kind">Tipo de agenda</Label>
           <select
             id="schedule_kind"
-            className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             {...form.register('schedule_kind')}
           >
             {SCHEDULE_KINDS.map((s) => (
@@ -216,11 +236,6 @@ export function ProfileForm({ initial }: { initial: ProfileFormInitial }) {
               placeholder="3"
               {...form.register('schedule_weeks')}
             />
-            {form.formState.errors.schedule_weeks && (
-              <p role="alert" className="text-destructive text-xs">
-                {form.formState.errors.schedule_weeks.message}
-              </p>
-            )}
           </div>
         )}
       </fieldset>
@@ -255,7 +270,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormInitial }) {
 
       <div className="flex items-center justify-end gap-3 border-t pt-4">
         <Button type="submit" disabled={pending}>
-          {pending ? 'Guardando…' : 'Guardar cambios'}
+          {pending ? 'Enviando...' : 'Enviar al admin para aprobación'}
         </Button>
       </div>
     </form>

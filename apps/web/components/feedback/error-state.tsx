@@ -13,7 +13,7 @@ export function ErrorState({ title, description, action, className }: ErrorState
     <div
       role="alert"
       className={cn(
-        'border-destructive/40 bg-destructive/5 flex flex-col items-center gap-3 rounded-lg border px-6 py-12 text-center',
+        'border-destructive/40 bg-destructive/5 pulse-error flex flex-col items-center gap-3 rounded-lg border px-6 py-12 text-center',
         className,
       )}
     >
