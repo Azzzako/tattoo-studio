@@ -33,6 +33,7 @@ export type ArtistRow = {
   featured: boolean;
   is_active: boolean;
   profile_id: string | null;
+  studio_id: string;
 };
 
 // ────────────────────────────────────────────────────────────────────────
@@ -55,7 +56,7 @@ const fetchArtistsListCached = unstable_cache(
     const { data } = await admin
       .from('tattoo_artists')
       .select(
-        'id, slug, display_name, headline, bio, long_bio, specialties, city, years_active, schedule_kind, schedule_weeks, avatar_path, instagram, twitter, youtube, website, featured, is_active, profile_id',
+        'id, slug, display_name, headline, bio, long_bio, specialties, city, years_active, schedule_kind, schedule_weeks, avatar_path, instagram, twitter, youtube, website, featured, is_active, profile_id, studio_id',
       )
       .eq('is_active', true)
       .order('featured', { ascending: false })
@@ -74,7 +75,7 @@ const fetchArtistBySlugCached = unstable_cache(
     const { data } = await admin
       .from('tattoo_artists')
       .select(
-        'id, slug, display_name, headline, bio, long_bio, specialties, city, years_active, schedule_kind, schedule_weeks, avatar_path, instagram, twitter, youtube, website, featured, is_active, profile_id',
+        'id, slug, display_name, headline, bio, long_bio, specialties, city, years_active, schedule_kind, schedule_weeks, avatar_path, instagram, twitter, youtube, website, featured, is_active, profile_id, studio_id',
       )
       .eq('slug', slug)
       .eq('is_active', true)
@@ -93,7 +94,7 @@ const fetchArtistByProfileIdCached = unstable_cache(
     const { data } = await admin
       .from('tattoo_artists')
       .select(
-        'id, slug, display_name, headline, bio, long_bio, specialties, city, years_active, schedule_kind, schedule_weeks, avatar_path, instagram, twitter, youtube, website, featured, is_active, profile_id',
+        'id, slug, display_name, headline, bio, long_bio, specialties, city, years_active, schedule_kind, schedule_weeks, avatar_path, instagram, twitter, youtube, website, featured, is_active, profile_id, studio_id',
       )
       .eq('profile_id', profileId)
       .order('updated_at', { ascending: false })

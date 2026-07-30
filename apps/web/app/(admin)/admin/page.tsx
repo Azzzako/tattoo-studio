@@ -34,27 +34,34 @@ export default async function AdminLanding() {
   const now = new Date();
   const horizon = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
 
-  const [artistsCount, servicesCount, customersCount, upcomingCount, upcomingRows] =
-    await Promise.all([
-      supabase
-        .from('tattoo_artists')
-        .select('id', { count: 'exact', head: true })
-        .eq('is_active', true),
-      supabase.from('services').select('id', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('customers').select('id', { count: 'exact', head: true }),
-      supabase
-        .from('appointments')
-        .select('id', { count: 'exact', head: true })
-        .gte('starts_at', now.toISOString())
-        .lt('starts_at', horizon.toISOString())
-        .neq('status', 'cancelled'),
-      supabase
-        .from('appointments')
-        .select('id, starts_at, ends_at, status, notes, artist_id, service_id, customer_id')
-        .gte('starts_at', now.toISOString())
-        .order('starts_at', { ascending: true })
-        .limit(8),
-    ]);
+  const [
+    artistsCount,
+    servicesCount,
+    customersCount,
+    upcomingCount,
+    upcomingRows,
+    pendingQuotesCount,
+  ] = await Promise.all([
+    supabase
+      .from('tattoo_artists')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true),
+    supabase.from('services').select('id', { count: 'exact', head: true }).eq('is_active', true),
+    supabase.from('customers').select('id', { count: 'exact', head: true }),
+    supabase
+      .from('appointments')
+      .select('id', { count: 'exact', head: true })
+      .gte('starts_at', now.toISOString())
+      .lt('starts_at', horizon.toISOString())
+      .neq('status', 'cancelled'),
+    supabase
+      .from('appointments')
+      .select('id, starts_at, ends_at, status, notes, artist_id, service_id, customer_id')
+      .gte('starts_at', now.toISOString())
+      .order('starts_at', { ascending: true })
+      .limit(8),
+    supabase.from('quotes').select('id', { count: 'exact', head: true }).eq('status', 'sent'),
+  ]);
 
   const ids = collectIds(upcomingRows.data ?? []);
   const [{ data: artistRows }, { data: serviceRows }, { data: customerRows }] = await Promise.all([
@@ -93,9 +100,15 @@ export default async function AdminLanding() {
       icon: Users,
     },
     {
-      label: 'Próximas 14d',
+      label: 'Proximas 14d',
       value: upcomingCount.count ?? 0,
       href: '/admin/calendar',
+      icon: CalendarDays,
+    },
+    {
+      label: 'Cotizaciones pendientes',
+      value: pendingQuotesCount.count ?? 0,
+      href: '/admin/quotes',
       icon: CalendarDays,
     },
   ];

@@ -166,6 +166,9 @@ export default async function ArtistDetailPage({ params }: ArtistPageProps) {
                   </Button>
                 );
               })}
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/tatuadores/${slug}/reservar`}>Cotizar</Link>
+              </Button>
               <Button asChild size="sm">
                 <Link href={`/tatuadores/${slug}/reservar`}>
                   Reservar con {artist.display_name}

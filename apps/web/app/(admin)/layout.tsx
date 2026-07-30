@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CalendarDays, Users, UserSquare2 } from 'lucide-react';
+import { CalendarDays, MessageCircle, Users, UserSquare2 } from 'lucide-react';
 
 import { Logo } from '@/components/brand/logo';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +27,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Button asChild variant="ghost" size="sm">
                 <Link href="/admin" className="flex items-center gap-2">
                   <CalendarDays className="h-4 w-4" /> Calendario
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/admin/quotes" className="flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4" /> Cotizaciones
                 </Link>
               </Button>
               {profile.role === 'admin' && (
