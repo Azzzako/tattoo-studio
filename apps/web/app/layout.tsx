@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from 'next';
 import { gotham, bickham } from '@/app/fonts';
 import { ThemeProvider } from '@/components/theme-provider';
 import { GsapProvider } from '@/components/animations/gsap-provider';
-import { LoadingScreen } from '@/components/animations/loading-screen';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? 'http://localhost:3000'),
@@ -49,7 +48,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-background text-foreground grain min-h-dvh font-sans antialiased">
         <ThemeProvider>
           <GsapProvider />
-          <LoadingScreen />
           {children}
         </ThemeProvider>
       </body>
