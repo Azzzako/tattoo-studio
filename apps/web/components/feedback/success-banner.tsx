@@ -13,7 +13,7 @@ export function SuccessBanner({ title, description, action, className }: Success
     <div
       role="status"
       className={cn(
-        'border-gold/40 bg-gold/5 text-foreground flex flex-col gap-2 rounded-lg border px-6 py-5 sm:flex-row sm:items-center sm:justify-between',
+        'border-gold/40 bg-gold/5 text-foreground flash-success flex flex-col gap-2 rounded-lg border px-6 py-5 sm:flex-row sm:items-center sm:justify-between',
         className,
       )}
     >

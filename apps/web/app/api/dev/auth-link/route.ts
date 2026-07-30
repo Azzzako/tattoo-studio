@@ -1,13 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'node:crypto';
+import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
+import { generateMagicLink } from '@/lib/supabase/magic-link';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-
-const siteUrl = () =>
-  process.env.NEXT_PUBLIC_SITE_URL ?? process.env.APP_URL ?? 'http://localhost:3000';
 
 const paramsSchema = z.object({
   email: z.string().trim().email('invalid email'),
@@ -27,6 +27,11 @@ function escapeHtml(s: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
 }
 
 function htmlPage(args: {
@@ -79,8 +84,26 @@ function slugify(input: string): string {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'dev-only endpoint' }, { status: 404 });
+  // Token-gated: only callers with the matching `DEV_ADMIN_TOKEN` env var
+  // can mint magic links. This is the production escape hatch that lets the
+  // studio admin log in without going through Supabase's email roundtrip
+  // (and its rate limit). Rotate the env var in Vercel + redeploy if it
+  // leaks.
+  const expected = process.env.DEV_ADMIN_TOKEN ?? '';
+  const authHeader = request.headers.get('authorization');
+  const bearerMatch = authHeader ? /^Bearer\s+(.+)$/i.exec(authHeader) : null;
+  const provided = bearerMatch?.[1] ?? '';
+  if (!expected) {
+    return NextResponse.json(
+      { error: 'unconfigured', message: 'DEV_ADMIN_TOKEN env var not set on server.' },
+      { status: 503 },
+    );
+  }
+  if (!provided || !safeEqual(provided, expected)) {
+    return NextResponse.json(
+      { error: 'unauthorized', message: 'Bearer token requerido (env var DEV_ADMIN_TOKEN).' },
+      { status: 401, headers: { 'WWW-Authenticate': 'Bearer realm="dev"' } },
+    );
   }
 
   const url = request.nextUrl;
@@ -109,24 +132,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const admin = createSupabaseAdminClient();
   const studioId = process.env.STUDIO_ID ?? null;
 
-  // 1. Ensure user exists (admin.createUser is idempotent only if we look up first).
+  // 1. Require pre-existing user. The dev endpoint is for testing login
+  //    flows only — new accounts must be created via the admin UI or
+  //    Supabase dashboard.
   const { data: existing } = await admin.auth.admin.listUsers({});
   const found = existing?.users.find((u) => u.email === parsed.data.email);
-  let userId = found?.id ?? null;
-
-  if (!userId) {
-    const { data: created, error: createErr } = await admin.auth.admin.createUser({
-      email: parsed.data.email,
-      email_confirm: true,
-    });
-    if (createErr || !created.user) {
-      return NextResponse.json(
-        { error: 'createUser failed', detail: createErr?.message ?? null },
-        { status: 500 },
-      );
-    }
-    userId = created.user.id;
+  if (!found) {
+    return NextResponse.json(
+      {
+        error: 'user_not_registered',
+        message: `No existe un usuario con email ${parsed.data.email}. Solo los dados de alta pueden solicitar link.`,
+      },
+      { status: 404 },
+    );
   }
+  const userId = found.id;
 
   // 2. Upsert profile with role.
   const { error: profileErr } = await admin
@@ -209,29 +229,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   // 4. Generate a magic link with redirect to /auth/callback.
-  const redirect = `${siteUrl()}/auth/callback`;
-  const res = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
-    method: 'POST',
-    headers: {
-      apikey: serviceKey,
-      Authorization: `Bearer ${serviceKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ type: 'magiclink', email: parsed.data.email, redirect_to: redirect }),
-  });
-
-  const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-  if (!res.ok) {
+  const linkResult = await generateMagicLink(parsed.data.email);
+  if (!linkResult.ok || !linkResult.actionLink) {
     return NextResponse.json(
-      { error: 'generate_link failed', status: res.status, detail: body },
-      { status: res.status },
+      { error: 'generate_link failed', detail: linkResult.error ?? null },
+      { status: 502 },
     );
   }
-
-  const actionLink = typeof body.action_link === 'string' ? body.action_link : null;
-  if (!actionLink) {
-    return NextResponse.json({ error: 'no action_link in response' }, { status: 502 });
-  }
+  const actionLink = linkResult.actionLink;
 
   if (wantsHtml(request)) {
     const htmlArgs = {
@@ -245,6 +250,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       headers: { 'content-type': 'text/html; charset=utf-8' },
     });
   }
+
+  revalidateTag('tattoo-artists:list');
 
   return NextResponse.json({
     email: parsed.data.email,

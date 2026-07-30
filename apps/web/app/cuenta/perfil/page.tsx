@@ -4,6 +4,7 @@ import { AvatarUpload } from './avatar-upload';
 import { ProfileForm } from './profile-form';
 import { getCurrentUser, getCurrentProfile } from '@/lib/supabase/current-user';
 import { getArtistByProfileId } from '@/lib/supabase/artists-cache';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,17 +18,13 @@ export default async function ArtistProfilePage() {
 
   const artistRow = await getArtistByProfileId(user.id);
 
-  // Per-request debug snapshot. Cheap because the read is cached; only
-  // surfaced when the lookup legitimately fails (no linked row).
-  const artistErr = artistRow ? null : { message: 'artist row not found' };
-
   if (!artistRow) {
     return (
       <div className="space-y-6">
         <header className="space-y-1">
           <h1 className="font-display text-3xl">Perfil</h1>
           <p className="text-muted-foreground text-sm">
-            Tu rol es <code>artist</code> pero no estás vinculado a una fila de tatuador. Pedile a
+            Tu rol es <code>artist</code> pero no estas vinculado a una fila de tatuador. Pedile a
             un admin que te asocie a un <code>slug</code>.
           </p>
         </header>
@@ -39,7 +36,6 @@ export default async function ArtistProfilePage() {
                 authUserId: user.id,
                 profileId: profile.id,
                 profileRole: profile.role,
-                queryError: artistErr?.message ?? null,
                 rowFound: artistRow ? 1 : 0,
               },
               null,
@@ -50,6 +46,21 @@ export default async function ArtistProfilePage() {
       </div>
     );
   }
+
+  const supabase = await createSupabaseServerClient();
+
+  // Latest pending change for this artist (if any) so the form can show
+  // the current pending state.
+  const { data: pendingChange } = await supabase
+    .from('artist_profile_changes')
+    .select('id, created_at, proposed_changes')
+    .eq('artist_id', artistRow.id)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  const pending = (pendingChange ?? [])[0] as
+    { id: string; created_at: string; proposed_changes: Record<string, unknown> } | undefined;
 
   return (
     <div className="space-y-8">
@@ -85,6 +96,8 @@ export default async function ArtistProfilePage() {
             youtube: (artistRow.youtube as string | null) ?? '',
             website: (artistRow.website as string | null) ?? '',
           }}
+          hasPendingChange={Boolean(pending)}
+          pendingProposedAt={pending?.created_at ?? null}
         />
       </section>
     </div>

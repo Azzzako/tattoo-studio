@@ -9,6 +9,7 @@ import { CountUp } from '@/components/animations/count-up';
 import { MaskReveal } from '@/components/animations/mask-reveal';
 import { Parallax } from '@/components/animations/parallax';
 import { TextReveal } from '@/components/animations/text-reveal';
+import { getArtistsList } from '@/lib/supabase/artists-cache';
 
 const STYLES = [
   'Blackwork',
@@ -19,29 +20,8 @@ const STYLES = [
   'Tradicional',
   'Dotwork',
   'Microrealismo',
-  'Japonés',
-  'Geométrico',
-];
-
-const ARTISTS = [
-  {
-    slug: 'inka',
-    name: 'Inka',
-    styles: 'Blackwork · Dotwork',
-    bio: 'Siete años dibujando geometría sobre piel.',
-  },
-  {
-    slug: 'mara',
-    name: 'Mara',
-    styles: 'Color · Fine-line',
-    bio: 'Especialista en piezas pequeñas con línea fina.',
-  },
-  {
-    slug: 'yael',
-    name: 'Yael',
-    styles: 'Realismo · Microrealismo',
-    bio: 'Retratos que respiran sobre piel.',
-  },
+  'Lettering',
+  'Blackwork gris',
 ];
 
 const PORTFOLIO = ['inka-1', 'inka-2', 'mara-1', 'yael-1', 'inka-3', 'mara-2'];
@@ -56,7 +36,16 @@ const EVENTS = [
   { slug: 'ink-fest-paris', title: 'Ink Fest Paris', city: 'París', date: '15 de octubre' },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const artists = await getArtistsList();
+  const artistCards = artists.map((a) => ({
+    slug: a.slug,
+    name: a.display_name,
+    styles: a.specialties?.join(' · ') ?? a.headline ?? 'Tatuador',
+    bio: a.bio ?? a.headline ?? '',
+    avatar: a.avatar_path,
+  }));
+
   return (
     <main className="flex flex-col">
       {/* HERO */}
@@ -185,16 +174,25 @@ export default function HomePage() {
             </Button>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
-            {ARTISTS.map((artist) => (
+            {artistCards.map((artist) => (
               <Link key={artist.slug} href={`/tatuadores/${artist.slug}`} className="group block">
                 <div className="border-border relative aspect-[3/4] overflow-hidden border">
                   <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105">
-                    <ImagePlaceholder
-                      seed={`artist-${artist.slug}`}
-                      ratio="3/4"
-                      overlay="fade"
-                      alt={`Retrato de ${artist.name}`}
-                    />
+                    {artist.avatar ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={artist.avatar}
+                        alt={`Retrato de ${artist.name}`}
+                        className="contrast-110 h-full w-full object-cover"
+                      />
+                    ) : (
+                      <ImagePlaceholder
+                        seed={`artist-${artist.slug}`}
+                        ratio="3/4"
+                        overlay="fade"
+                        alt={`Retrato de ${artist.name}`}
+                      />
+                    )}
                   </div>
                   <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-6">
@@ -209,6 +207,11 @@ export default function HomePage() {
                 <p className="text-ink-300 mt-4 text-sm">{artist.bio}</p>
               </Link>
             ))}
+            {artistCards.length === 0 && (
+              <p className="text-muted-foreground col-span-full text-center text-sm">
+                Aún no hay tatuadores publicados.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -240,7 +243,7 @@ export default function HomePage() {
                   </div>
                   <div className="absolute inset-x-0 bottom-0 p-4">
                     <p className="text-gold text-xs uppercase tracking-[0.2em]">
-                      {ARTISTS[i % ARTISTS.length]?.name}
+                      {artistCards[i % artistCards.length]?.name ?? '—'}
                     </p>
                   </div>
                 </div>
