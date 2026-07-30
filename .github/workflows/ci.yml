@@ -26,8 +26,8 @@ jobs:
         run: bun run typecheck
       - name: Unit & integration
         run: bun run test
-      - name: Static export build
+      - name: Build
         run: bun run build
         env:
-          APP_URL: https://azzzako.github.io/tattoo-studio
+          APP_URL: http://localhost:3000
           STUDIO_ID: '00000000-0000-0000-0000-000000000001'

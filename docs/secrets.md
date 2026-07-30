@@ -49,13 +49,6 @@ Secrets requeridos para CI y deploy. Configurar vía `gh secret set` o en `Setti
 | `WHATSAPP_ACCESS_TOKEN`        | System user access token |
 | `WHATSAPP_BUSINESS_ACCOUNT_ID` | Business account ID      |
 
-### Cloudflare (deploy)
-
-| Nombre                  | Descripción                            |
-| ----------------------- | -------------------------------------- |
-| `CLOUDFLARE_ACCOUNT_ID` | Account ID                             |
-| `CLOUDFLARE_API_TOKEN`  | Token con scope `Workers Scripts:Edit` |
-
 ### Cron
 
 | Nombre        | Descripción                                     |
@@ -79,8 +72,6 @@ gh secret set GOOGLE_OAUTH_REDIRECT_URI --body "https://tattoo-studio.example.co
 gh secret set WHATSAPP_PHONE_ID --body "..."
 gh secret set WHATSAPP_ACCESS_TOKEN --body "..."
 gh secret set WHATSAPP_BUSINESS_ACCOUNT_ID --body "..."
-gh secret set CLOUDFLARE_ACCOUNT_ID --body "..."
-gh secret set CLOUDFLARE_API_TOKEN --body "..."
 gh secret set CRON_SECRET --body "$(openssl rand -hex 32)"
 ```
 

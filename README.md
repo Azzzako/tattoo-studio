@@ -6,7 +6,7 @@ Plataforma para estudio de tatuajes: landing pública, portafolio, agenda por ta
 
 - Next.js 15 + React 19 + TypeScript estricto
 - Supabase (Postgres, Auth, Storage, RLS)
-- Cloudflare Workers vía OpenNext
+- Vercel (Node runtime, auto-deploy desde `main`)
 - Meta WhatsApp Cloud API
 - Resend
 - Tailwind + shadcn/ui
