@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { CheckCircle2, Pencil, X } from 'lucide-react';
+import { CheckCircle2, Pencil, Plus, X } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -86,12 +86,19 @@ export default async function AdminArtistsPage() {
 
   return (
     <div className="space-y-8">
-      <header className="space-y-1">
-        <h1 className="font-display text-3xl">Tatuadores</h1>
-        <p className="text-muted-foreground text-sm">
-          {artistList.length} tatuadores · {artistList.filter((a) => a.is_active).length} activos ·{' '}
-          {artistList.filter((a) => a.featured).length} destacados
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="font-display text-3xl">Tatuadores</h1>
+          <p className="text-muted-foreground text-sm">
+            {artistList.length} tatuadores · {artistList.filter((a) => a.is_active).length} activos
+            · {artistList.filter((a) => a.featured).length} destacados
+          </p>
+        </div>
+        <Button asChild>
+          <Link href="/admin/artists/new" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" /> Nuevo tatuador
+          </Link>
+        </Button>
       </header>
 
       {/* Pending changes */}

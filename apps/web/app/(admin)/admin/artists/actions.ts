@@ -410,3 +410,152 @@ export async function uploadAvatarProposal(
   revalidatePath('/cuenta/perfil');
   return { ok: true, changeId: (inserted as { id: string }).id };
 }
+
+// ────────────────────────────────────────────────────────────────────
+// Admin create artist
+// ────────────────────────────────────────────────────────────────────
+
+const createArtistSchema = z.object({
+  display_name: z.string().trim().min(2, 'Mínimo 2 caracteres').max(120),
+  email: z.string().trim().email('Email inválido').max(254),
+  phone_e164: z
+    .string()
+    .trim()
+    .min(8)
+    .regex(/^\+?[0-9\s()-]{8,20}$/, 'Solo dígitos, opcional +, espacios y guiones')
+    .transform((s) => s.replace(/[\s()+-]/g, '')),
+  slug: z
+    .string()
+    .trim()
+    .min(2, 'Mínimo 2 caracteres')
+    .max(60)
+    .regex(/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/, 'Solo letras minúsculas, números y guiones'),
+  city: z.string().trim().max(120).optional().or(z.literal('')),
+  specialties: z.string().trim().max(200).optional().or(z.literal('')),
+  instagram: z.string().trim().max(60).optional().or(z.literal('')),
+});
+
+export type CreateArtistResult =
+  { ok: true; magicLink: string; userId: string } | { ok: false; message: string };
+
+export async function createArtistAsAdmin(
+  _prev: CreateArtistResult | undefined,
+  formData: FormData,
+): Promise<CreateArtistResult> {
+  const parsed = createArtistSchema.safeParse({
+    display_name: formData.get('display_name') ?? '',
+    email: formData.get('email') ?? '',
+    phone_e164: formData.get('phone_e164') ?? '',
+    slug: formData.get('slug') ?? '',
+    city: formData.get('city') ?? '',
+    specialties: formData.get('specialties') ?? '',
+    instagram: formData.get('instagram') ?? '',
+  });
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    return { ok: false, message: issue?.message ?? 'Datos inválidos' };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return { ok: false, message: 'No autenticado.' };
+  const { data: profileRow } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userData.user.id)
+    .maybeSingle();
+  if (profileRow?.role !== 'admin') return { ok: false, message: 'Solo administradores.' };
+
+  const admin = createSupabaseAdminClient();
+  const studioId = process.env.STUDIO_ID ?? null;
+  if (!studioId) return { ok: false, message: 'STUDIO_ID no configurado.' };
+
+  // Check slug uniqueness (defence in depth — also enforced by UNIQUE).
+  const { data: slugConflict } = await admin
+    .from('tattoo_artists')
+    .select('id')
+    .eq('studio_id', studioId)
+    .eq('slug', parsed.data.slug)
+    .maybeSingle();
+  if (slugConflict) {
+    return { ok: false, message: `El slug "${parsed.data.slug}" ya existe en este estudio.` };
+  }
+
+  // Check email uniqueness.
+  const { data: emailExists } = await admin.auth.admin.listUsers({});
+  if (emailExists?.users.some((u) => u.email === parsed.data.email)) {
+    return {
+      ok: false,
+      message: `Ya existe un usuario con email ${parsed.data.email}. Reenviale el magic link desde su fila.`,
+    };
+  }
+
+  // 1. Create auth user.
+  const { data: created, error: createErr } = await admin.auth.admin.createUser({
+    email: parsed.data.email,
+    email_confirm: true,
+  });
+  if (createErr || !created.user) {
+    return {
+      ok: false,
+      message: createErr?.message ?? 'No se pudo crear el usuario.',
+    };
+  }
+  const userId = created.user.id;
+
+  // 2. Insert profile.
+  const { error: profileErr } = await admin
+    .from('profiles')
+    .insert({ id: userId, role: 'artist', studio_id: studioId });
+  if (profileErr) {
+    // Rollback: delete auth user.
+    await admin.auth.admin.deleteUser(userId);
+    return {
+      ok: false,
+      message: `Perfil: ${profileErr.message}`,
+    };
+  }
+
+  // 3. Insert tattoo_artists row.
+  const specialtiesArr = parsed.data.specialties
+    ? parsed.data.specialties
+        .split(',')
+        .map((t) => t.trim().toLowerCase())
+        .filter((t) => t.length > 0 && t.length <= 30)
+    : [];
+
+  const { error: artistErr } = await admin.from('tattoo_artists').insert({
+    studio_id: studioId,
+    profile_id: userId,
+    slug: parsed.data.slug,
+    display_name: parsed.data.display_name,
+    city: parsed.data.city || null,
+    specialties: specialtiesArr,
+    instagram: parsed.data.instagram || null,
+    is_active: true,
+    featured: false,
+  });
+  if (artistErr) {
+    // Rollback: delete profile + auth user.
+    await admin.from('profiles').delete().eq('id', userId);
+    await admin.auth.admin.deleteUser(userId);
+    return {
+      ok: false,
+      message: `Tatuador: ${artistErr.message}`,
+    };
+  }
+
+  // 4. Generate magic link.
+  const { generateMagicLink } = await import('@/lib/supabase/magic-link');
+  const linkResult = await generateMagicLink(parsed.data.email);
+  if (!linkResult.ok || !linkResult.actionLink) {
+    revalidatePath('/admin/artists');
+    return {
+      ok: false,
+      message: `Usuario creado pero no se pudo generar magic link: ${linkResult.error}. Reintenta desde la fila del tatuador.`,
+    };
+  }
+
+  revalidatePath('/admin/artists');
+  return { ok: true, magicLink: linkResult.actionLink, userId };
+}

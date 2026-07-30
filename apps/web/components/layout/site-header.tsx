@@ -164,11 +164,7 @@ export function SiteHeader({ className, user }: { className?: string; user?: Hea
               role={user.role}
               avatarUrl={user.avatarUrl}
             />
-          ) : (
-            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-              <Link href="/login">Entrar</Link>
-            </Button>
-          )}
+          ) : null}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Abrir menú" className="md:hidden">
@@ -198,11 +194,6 @@ export function SiteHeader({ className, user }: { className?: string; user?: Hea
               <Button asChild className="mt-12 w-full">
                 <Link href="/tatuadores/inka/reservar">Reservar cita</Link>
               </Button>
-              {!user && (
-                <Button asChild variant="outline" className="mt-4 w-full">
-                  <Link href="/login">Entrar</Link>
-                </Button>
-              )}
             </SheetContent>
           </Sheet>
         </div>
