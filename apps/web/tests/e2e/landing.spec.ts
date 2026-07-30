@@ -32,7 +32,7 @@ test('navegación a eventos y detalle', async ({ page }) => {
   await expect(page).toHaveURL(/\/eventos\/convencion-tinta-2026\/?$/);
 });
 
-test('trailing slash habilitado para Pages', async ({ page }) => {
+test('trailing slash habilitado', async ({ page }) => {
   const response = await page.goto('/tatuadores');
   expect(response?.url()).toMatch(/\/tatuadores\/?$/);
 });

@@ -6,14 +6,14 @@
 Visitante / Cliente / Tatuador / Admin / Superadmin
                 │
                 ▼
-        Next.js en Cloudflare Workers (OpenNext)
+Next.js en Vercel (Node runtime)
                 │
-   ┌────────────┼─────────────────────────────┐
-   │            │                             │
+    ┌────────────┼─────────────────────────────┐
+    │            │                             │
 Supabase Auth  Supabase Postgres + RLS   Supabase Storage
                 │                             │
                 │                             │
-        Cloudflare Cron Triggers         Cloudflare Queues (futuro)
+        Vercel Cron (futuro)            Cloudflare Queues (futuro)
                 │                             │
                 ▼                             ▼
         Google Calendar API          Meta WhatsApp Cloud API
@@ -54,9 +54,8 @@ Supabase Auth  Supabase Postgres + RLS   Supabase Storage
 
 ### Edge / runtime
 
-- Cloudflare Workers (OpenNext).
-- Variables planas en `wrangler.jsonc`.
-- Secretes en `wrangler secret put`.
+- Vercel (Node runtime) con auto-deploy desde `main`.
+- Variables planas y secretos en Vercel → Project → Settings → Environment Variables.
 - Cron jobs autenticados con `CRON_SECRET`.
 
 ## Datos
@@ -94,8 +93,8 @@ Entidades principales en `packages/db/migrations/0001_init.sql`:
 
 ## Observabilidad
 
-- `wrangler.jsonc` con `observability.enabled: true`.
-- Cloudflare Workers Logs (incluido).
+- Vercel Runtime Logs (incluido en plan Pro+).
+- Vercel Speed Insights + Analytics opcionales.
 - `notification_outbox` para reintentos.
 - `sync_log` para depurar Google.
 - `audit_logs` para investigar cambios sensibles.
